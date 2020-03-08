@@ -28,6 +28,9 @@ $white+       ;
   \-             {\p -> \s -> TokenMinus p}
   \+             {\p -> \s -> TokenPlus p}
   \=             {\p -> \s -> TokenEq p}
+  \>             {\p -> \s -> TokenGt p}
+  \<             {\p -> \s -> TokenLt p}
+  list           {\p -> \s -> TokenList p}
   if             {\p -> \s -> TokenIf p }
   then           {\p -> \s -> TokenThen p }
   else           {\p -> \s -> TokenElse p }
@@ -35,8 +38,6 @@ $white+       ;
   end            {\p -> \s -> TokenEnd p}
   $digit+        {\p -> \s -> TokenInt p (read s)}
   $alpha+        {\p -> \s -> TokenString p s} 
-
-
 
 { 
 -- Each action has type :: AlexPosn -> String -> MDLToken 
@@ -60,7 +61,10 @@ data Token =
   TokenPlusEq AlexPosn         |
   TokenMinus AlexPosn          | 
   TokenPlus AlexPosn           |
-  TokenEq AlexPosn             |   
+  TokenEq AlexPosn             | 
+  TokenGt AlexPosn             |
+  TokenLt AlexPosn             |
+  TokenList AlexPosn           |  
   TokenIf AlexPosn             |
   TokenThen AlexPosn           |    
   TokenElse AlexPosn           |
@@ -89,6 +93,9 @@ tokenPosn (TokenPlusEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenMinus  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenPlus (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenGt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenLt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenList (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenIf (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenThen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenElse (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
