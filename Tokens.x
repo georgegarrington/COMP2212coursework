@@ -17,7 +17,9 @@ $white+       ;
   \)             {\p -> \s -> TokenRParen p }
   \[             {\p -> \s -> TokenLSquare p}  
   \]             {\p -> \s -> TokenRSquare p}  
-  \:             {\p -> \s -> TokenColon p}    
+  \:             {\p -> \s -> TokenColon p} 
+  "++"           {\p -> \s -> TokenAppend p}
+  list           {\p -> \s -> TokenList p}   
   "&&"           {\p -> \s -> TokenAnd p}
   "||"           {\p -> \s -> TokenOr p} 
   \!             {\p -> \s -> TokenNot p}
@@ -30,7 +32,6 @@ $white+       ;
   \=             {\p -> \s -> TokenEq p}
   \>             {\p -> \s -> TokenGt p}
   \<             {\p -> \s -> TokenLt p}
-  list           {\p -> \s -> TokenList p}
   if             {\p -> \s -> TokenIf p }
   then           {\p -> \s -> TokenThen p }
   else           {\p -> \s -> TokenElse p }
@@ -52,6 +53,8 @@ data Token =
   TokenLSquare AlexPosn        |
   TokenRSquare AlexPosn        |
   TokenColon AlexPosn          |
+  TokenAppend AlexPosn         |
+  TokenList AlexPosn           |
   TokenAnd AlexPosn            |
   TokenOr AlexPosn             |
   TokenNot AlexPosn            |
@@ -63,8 +66,7 @@ data Token =
   TokenPlus AlexPosn           |
   TokenEq AlexPosn             | 
   TokenGt AlexPosn             |
-  TokenLt AlexPosn             |
-  TokenList AlexPosn           |  
+  TokenLt AlexPosn             |  
   TokenIf AlexPosn             |
   TokenThen AlexPosn           |    
   TokenElse AlexPosn           |
@@ -83,6 +85,8 @@ tokenPosn (TokenRParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLSquare  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenRSquare (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenColon (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenAppend (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenList (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenAnd (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenOr (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenNot  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
@@ -95,7 +99,6 @@ tokenPosn (TokenPlus (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenGt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenList (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenIf (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenThen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenElse (AlexPn a l c)) = show(l) ++ ":" ++ show(c)

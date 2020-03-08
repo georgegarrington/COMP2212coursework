@@ -4,39 +4,51 @@ import Tokens
 }
 
 %name parseCalc 
-%tokentype { MDLToken } 
+%tokentype { Token } 
 %error { parseError }
 %token 
-    Forward { TokenForward _ } 
-    Rotate  { TokenRotate _ } 
-    digit   { TokenDigit _ $$ } 
-    int     { TokenInt _ $$ } 
-    Check   { TokenCheck _ } 
-    If      { TokenIf _ } 
-    Then    { TokenThen _ } 
-    Else    { TokenElse _ } 
-    L       { TokenLeft  _  }
-    R       { TokenRight _ } 
-    ';'     { TokenSeq _ }
+    
+    '\n'    { TokenNewLine _ }
+    '$'     { TokenDollar _ }
+    '#'     { TokenTag _ }
     '('     { TokenLParen _ } 
     ')'     { TokenRParen _ } 
+    '['     { TokenLSquare _ } 
+    ']'     { TokenRSquare _ } 
+    ':'     { TokenColon _ }
+    '&&'    { TokenAnd _ }
+    '||'    { TokenOr _ }
+    '!'     { TokenNot _ }
+    '/='    { TokenDivEq _ }
+    '*='    { TokenTimesEq _ }
+    '-='    { TokenTimSubEq _ }
+    '+='    { TokenPlusEq _ }
+    '-'     { TokenMinus _ }
+    '+'     { TokenPlus _ }
+    '='     { TokenEq _ }
+    '>'     { TokenGt _ }
+    '<'     { TokenLt _ }
+    '++'    { TokenAppend _ }
+    list    { TokenList _ }
+    if      { TokenIf _ } 
+    then    { TokenThen _ } 
+    else    { TokenElse _ } 
+    goTo    { TokenGoTo _ }
+    end     { TokenEnd _ }
+    int     { TokenInt _ $$ } 
+    string  { TokenString _ $$}
 
+
+    
 %right Then
 %right Else 
 %right ';' 
 %left 'Forward'
 %left 'Rotate'
 %% 
-Exp : Forward int               { Forward $2 } 
-    | Forward digit             { Forward $2 }
-    | Rotate Dir                { Rotate $2 } 
-    | Check digit               { Check $2 } 
-    | If Exp Then Exp Else Exp  { Cond $2 $4 $6 } 
-    | Exp ';' Exp               { Seq $1 $3 } 
+Exp : If Exp Then Exp Else Exp  { Cond $2 $4 $6 } 
     | '(' Exp ')'                   { $2 }
 
-Dir : L         { LDir } 
-    | R         { RDir } 
 
 { 
 parseError :: [MDLToken] -> a
