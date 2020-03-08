@@ -46,20 +46,24 @@ import Tokens
 %left 'Forward'
 %left 'Rotate'
 %% 
-Exp : If Exp Then Exp Else Exp  { Cond $2 $4 $6 } 
+
+Exp : string ':' Type {Var $1 $3}
+    | '#' string {Tag $2}
+    
+    |If Exp Then Exp Else Exp  { Cond $2 $4 $6 } 
     | '(' Exp ')'                   { $2 }
 
+Type : '[' Type ']' {ListWithType $2}
+    | List {TypeList}
+    | Int {TypeInt}
 
 { 
-parseError :: [MDLToken] -> a
+parseError :: [Token] -> a
 parseError [] = error "Unknown Parse Error" 
 parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
-data Dir = LDir | RDir deriving Show
-data Exp = Forward Int
-         | Rotate Dir 
-         | Check Int
-         | Cond Exp Exp Exp
-         | Seq Exp Exp 
+
+data Exp = Cond Exp Exp Exp
+        
          deriving Show 
 
 } 
