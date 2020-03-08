@@ -8,8 +8,8 @@ import Tokens
 %error { parseError }
 %token 
     
-    '\n'    { TokenNewLine _ }
     '$'     { TokenDollar _ }
+    '!#'    { TokenEndTag _ }
     '#'     { TokenTag _ }
     '('     { TokenLParen _ } 
     ')'     { TokenRParen _ } 
@@ -33,7 +33,7 @@ import Tokens
     if      { TokenIf _ } 
     then    { TokenThen _ } 
     else    { TokenElse _ } 
-    goTo    { TokenGoTo _ }
+    continue    { TokenContinue _ }
     end     { TokenEnd _ }
     int     { TokenInt _ $$ } 
     string  { TokenString _ $$}
@@ -42,9 +42,6 @@ import Tokens
     
 %right Then
 %right Else 
-%right ';' 
-%left 'Forward'
-%left 'Rotate'
 %% 
 
 Exp : string ':' Type {Var $1 $3}
