@@ -9,7 +9,6 @@ $alpha = [a-zA-Z]
 $newLine = [\n]
 
 tokens :-
-$white+       ; 
   "--".*        ; 
   $newLine       {\p -> \s -> TokenNewLine p}
   \$             {\p -> \s -> TokenDollar p} 
