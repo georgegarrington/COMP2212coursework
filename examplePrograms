@@ -14,6 +14,8 @@ while(streams[0].notEmpty() && steams[1].notEmpty()){
 
 }
 
+end;
+
 --Program 2
 
 //Declare the array size at the beginning
@@ -35,6 +37,8 @@ while(streams[0].notEmpty() && streams[1].notEmpty() && streams[2].notEmpty()){
 
 } 
 
+end;
+
 --Program 3
 
 //Only ever need to hold one variable in memory
@@ -53,6 +57,8 @@ while(streams[0].notEmpty() && streams[1].notEmpty()){
     vars[0].print();
 
 }
+
+end;
 
 --Program 4
 
@@ -78,6 +84,8 @@ while(streams[0].length() > 3){
 
 }
 
+end;
+
 --Program 5
 
 numVars = 2;
@@ -90,3 +98,5 @@ while(streams[0].notEmpty()){
     vars[0].print();
 
 }
+
+end;
