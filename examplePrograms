@@ -65,7 +65,7 @@ end;
 //Always declare the array size at the beginning
 numVars = 3;
 
-while(streams[0].length() > 3){
+while(streams[0].length() >= 3){
 
     vars[2] = streams[0].take();
     vars[2] = 3 * vars[2] - 1;
@@ -89,13 +89,13 @@ end;
 --Program 5
 
 numVars = 2;
-vars[0] = 0;
+vars[1] = 0;
 
 while(streams[0].notEmpty()){
 
-    vars[1] = streams[0].take();
-    vars[0] = vars[0] + vars[1];
-    vars[0].print();
+    vars[0] = streams[0].take();
+    vars[1] = vars[0] + vars[1];
+    vars[1].print();
 
 }
 
