@@ -65,6 +65,7 @@ end;
 //Always declare the array size at the beginning
 numVars = 3;
 
+--length() is the amount of elements remaining in the stream
 while(streams[0].length() >= 3){
 
     vars[2] = streams[0].take();
