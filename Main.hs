@@ -1,5 +1,5 @@
 import Tokens
---import Grammar
+import Grammar
 import System.Environment
 import Control.Exception
 import System.IO
@@ -8,4 +8,4 @@ main = do
 
    [path] <- getArgs
    string <- readFile path
-   print (alexScanTokens string)
+   print $ parse $ (alexScanTokens string)
