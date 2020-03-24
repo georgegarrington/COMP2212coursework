@@ -1,5 +1,6 @@
 import Tokens
 import Grammar
+import Evaluator
 import System.Environment
 import Control.Exception
 import System.IO

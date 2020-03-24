@@ -966,7 +966,7 @@ data Exp = Seq Exp Exp
          | PrintVar Int
          | DropFrom Int
          | EndProgram
-         deriving Show
+         deriving (Show, Read)
 
 data IntExp = Mul IntExp IntExp
             | Div IntExp IntExp
@@ -977,7 +977,7 @@ data IntExp = Mul IntExp IntExp
             | GetVal Int
             | TakeFrom Int
             | GetLength Int
-            deriving Show
+            deriving (Show, Read)
 
 data BExp = And BExp BExp
           | Or BExp BExp
@@ -991,7 +991,7 @@ data BExp = And BExp BExp
           | NEqual IntExp IntExp
           | StreamEmpty Int
           | StreamNotEmpty Int
-          deriving Show
+          deriving (Show, Read)
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- $Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp $
 

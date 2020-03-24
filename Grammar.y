@@ -58,7 +58,7 @@ import Tokens
 %% 
 
 Exp : Exp ';' Exp {Seq $1 $3}
-    | Exp ';' {EndExp $1}
+    | Exp ';' {Single $1}
     | varSize '=' int {VarSize $3}
     | while '(' BExp ')' '{' Exp '}' {While $3 $6}
     | vars '['int']' '=' IntExp {SetVal $3 $6}
@@ -102,7 +102,7 @@ parseError [] = error "Unknown Parse Error"
 parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 
 data Exp = Seq Exp Exp
-         | EndExp Exp
+         | Single Exp
          | VarSize Int
          | While BExp Exp
          | SetVal Int IntExp
@@ -113,7 +113,7 @@ data Exp = Seq Exp Exp
          | PrintVar Int
          | DropFrom Int
          | EndProgram
-         deriving Show
+         deriving (Show, Read)
 
 data IntExp = Mul IntExp IntExp
             | Div IntExp IntExp
@@ -124,7 +124,7 @@ data IntExp = Mul IntExp IntExp
             | GetVal Int
             | TakeFrom Int
             | GetLength Int
-            deriving Show
+            deriving (Show, Read)
 
 data BExp = And BExp BExp
           | Or BExp BExp
@@ -138,6 +138,6 @@ data BExp = And BExp BExp
           | NEqual IntExp IntExp
           | StreamEmpty Int
           | StreamNotEmpty Int
-          deriving Show
+          deriving (Show, Read)
 
 } 
