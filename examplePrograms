@@ -1,0 +1,103 @@
+--Program 1
+
+//Declare the array size at the beginning
+numVars = 3;
+
+while(streams[0].notEmpty() && steams[1].notEmpty()){
+
+    vars[0] = streams[0].take();
+    vars[1] = streams[0].take();
+    vars[2] = streams[1].take();
+    vars[0].print();
+    vars[1].print();
+    vars[2].print();
+
+}
+
+end;
+
+--Program 2
+
+//Declare the array size at the beginning
+numVars = 5;
+
+while(streams[0].notEmpty() && streams[1].notEmpty() && streams[2].notEmpty()){
+
+    vars[0] = streams[2].take();
+    vars[1] = streams[1].take();
+    vars[2] = streams[0].take();
+    vars[3] = vars[0] + vars[1];
+    vars[4] = vars[1] + vars[2];
+
+    vars[0].print();
+    vars[1].print();
+    vars[2].print();
+    vars[3].print();
+    vars[4].print();
+
+} 
+
+end;
+
+--Program 3
+
+//Only ever need to hold one variable in memory
+numVars = 1;
+
+vars[0] = 0;
+vars[0].print();
+
+while(streams[0].notEmpty() && streams[1].notEmpty()){
+
+    streams[1].drop(); //disregard
+    vars[0] = streams[1].take();
+    vars[0].print();
+
+    vars[0] = streams[0].take();
+    vars[0].print();
+
+}
+
+end;
+
+--Program 4
+
+//Always declare the array size at the beginning
+numVars = 3;
+
+--length() is the amount of elements remaining in the stream
+while(streams[0].length() >= 3){
+
+    vars[2] = streams[0].take();
+    vars[2] = 3 * vars[2] - 1;
+    vars[1] = streams[0].take();
+    /*
+    The above line may be unnecessary; i.e. maybe the below line could
+    just be 2 * streams[0].take(); and do the taking from the stream and
+    timesing by 2 in one go but I am not sure whether this is gonna be difficult 
+    so thats why I am doing 2 seperate lines for now
+    */
+    vars[1] = 2 * vars[1]; 
+    vars[0] = streams[0].take();
+    vars[0].print();
+    vars[1].print();
+    vars[2].print();
+
+}
+
+end;
+
+--Program 5
+
+numVars = 2;
+vars[1] = 0;
+
+while(streams[0].notEmpty()){
+
+    vars[0] = streams[0].take();
+    vars[1] = vars[0] + vars[1];
+    vars[1].print();
+
+}
+
+end;
