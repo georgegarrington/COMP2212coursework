@@ -1,6 +1,6 @@
 varSize = 3;
 
-while(streams[0].notEmpty() && streams[1].notEmpty()){
+while(streams[0].notEmpty() || streams[1].notEmpty()){
 
     vars[0] = streams[0].take();
     vars[1] = streams[0].take();
