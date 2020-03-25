@@ -530,7 +530,7 @@ happyReduce_2 = happySpecReduce_2  4 happyReduction_2
 happyReduction_2 _
 	(HappyAbsSyn4  happy_var_1)
 	 =  HappyAbsSyn4
-		 (EndExp happy_var_1
+		 (Single happy_var_1
 	)
 happyReduction_2 _ _  = notHappyAtAll 
 
@@ -955,8 +955,9 @@ parseError [] = error "Unknown Parse Error"
 parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 
 data Exp = Seq Exp Exp
-         | EndExp Exp
+         | Single Exp
          | VarSize Int
+         | IncVal Int
          | While BExp Exp
          | SetVal Int IntExp
          | TimesEq Int IntExp

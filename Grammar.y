@@ -104,6 +104,7 @@ parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 data Exp = Seq Exp Exp
          | Single Exp
          | VarSize Int
+         | IncVal Int
          | While BExp Exp
          | SetVal Int IntExp
          | TimesEq Int IntExp
