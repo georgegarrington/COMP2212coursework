@@ -55,8 +55,9 @@ import Tokens
     int     { TokenInt _ $$ } 
     string  { TokenString _ $$}
 
+%left '+' '-'
+%left '*' '/'
 %% 
-
 Exp : Exp ';' Exp {Seq $1 $3}
     | Exp ';' {Single $1}
     | varSize '=' int {VarSize $3}
@@ -71,7 +72,8 @@ Exp : Exp ';' Exp {Seq $1 $3}
     | end {EndProgram}
 
 --This will always evaluate to an int
-IntExp : IntExp '*' IntExp {Mul $1 $3}
+IntExp : '(' IntExp ')' {$2}
+       | IntExp '*' IntExp {Mul $1 $3}
        | IntExp '/' IntExp {Div $1 $3}
        | IntExp '+' IntExp {Add $1 $3}
        | IntExp '-' IntExp {Sub $1 $3}
@@ -82,7 +84,8 @@ IntExp : IntExp '*' IntExp {Mul $1 $3}
        | streams '['int']' '.' length '('')' {GetLength $3}
 
 --This will always evaluate to a boolean
-BExp : BExp '&&' BExp {And $1 $3}
+BExp : '(' BExp ')' {$2}
+     | BExp '&&' BExp {And $1 $3}
      | BExp '||' BExp {Or $1 $3}
      | '!' BExp {Not $2}
      | true {DataBool True}

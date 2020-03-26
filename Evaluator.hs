@@ -20,11 +20,12 @@ nullState :: EvalState
 nullState = State [] []
 
 problem1 :: EvalState
-problem1 = State [0,0,0] [[1,2,3,4],[5,6,7,8]]
+problem1 = State [] [[1,2,3,4],[5,6,7,8]]
 
 problem1Parse :: Exp 
 problem1Parse = Seq (VarSize 3) (Seq (While (And (StreamNotEmpty 0) (StreamNotEmpty 1)) (Seq (SetVal 0 (TakeFrom 0)) (Seq (SetVal 1 (TakeFrom 0)) (Seq (SetVal 2 (TakeFrom 1)) (Seq (PrintVar 0) (Seq (PrintVar 1) (Single (PrintVar 2)))))))) (Single EndProgram))
 
+--while loop with increment to 10
 exampleProg :: Exp
 exampleProg = Seq (VarSize 1) (Seq (While (LThan (GetVal 0) (DataInt 10)) (IncVal 0)) EndProgram)
 
@@ -64,10 +65,27 @@ evaluate s ((IncVal i):es) = do
         val = getIndex s i
 
 --Evaluate e1 then evaluate e2
-evaluate s ((Seq e1 e2):es) = evaluate s (e1:e2:es)
-evaluate s ((Single e):es) = evaluate s (e:es)
-evaluate s ((VarSize x):es) = evaluate (setVarSize s x) es
-evaluate s ((SetVal i x):es) = evaluate (setIndex state i (DataInt val)) es
+evaluate s ((Seq e1 e2):es) = do
+    
+    print s
+    evaluate s (e1:e2:es)
+
+evaluate s ((Single e):es) = do
+    
+    print s
+    evaluate s (e:es)
+
+evaluate s ((VarSize x):es) = do
+    
+    print s
+    evaluate (setVarSize s x) es
+
+evaluate s ((SetVal i x):es) = do
+    
+    print s
+    print $ "setting index " ++ (show i) ++ " to value: " ++ (show val)
+   
+    evaluate (setIndex state i (DataInt val)) es
 
     where 
 
@@ -76,12 +94,18 @@ evaluate s ((SetVal i x):es) = evaluate (setIndex state i (DataInt val)) es
 
 evaluate s ((PrintVar x):es) = do 
 
+    print s
     print (getIndex s x)
     evaluate s es
 
-evaluate s ((DropFrom x):es) = evaluate (dropFrom s x) es
+evaluate s ((DropFrom x):es) = do
+    
+    print s
+    evaluate (dropFrom s x) es
+
 evaluate s ((While b1 e):es) = do
 
+    print s
     if(evalBool s b1) then (evaluate s (e:(While b1 e):es)) else (print $ (show s) ++ " Loop finished")
 
 
@@ -107,7 +131,6 @@ evalBool s (StreamNotEmpty i) = notEmpty s i
 --Unwraps the evaluated int from its tate tuple
 evalIntStateless :: EvalState -> IntExp -> Int
 evalIntStateless s e = snd $ evalInt s e
-
 
 --INPUT: state, int expression to evaluate
 --OUTPUT: tuple of resulting state and evaluated int
@@ -139,19 +162,27 @@ peekFrom (State _ xss) i = head (xss !! i)
 
 --INPUT: State, which stream to remove from:
 --OUTPUT: resulting state, with requested stream head removed
+{-
 dropFrom :: EvalState -> Int -> EvalState 
 dropFrom _ i | i < 0 = error "Index out of bounds!"
-dropFrom (State ys []) = (State ys [])
+dropFrom (State ys []) _ = (State ys [])
 dropFrom (State ys (xs:xss)) 0 = State ys ([drop 1 xs] ++ xss)
-dropFrom (State ys (xs:xss)) i = dropFrom (State ys xss) (i - 1)
+dropFrom (State ys (xs:xss)) i = dropFrom (State ys xss) (i - 1)-}
 
+dropFrom :: EvalState -> Int -> EvalState
+dropFrom s i = dropFromAux s i []
+
+dropFromAux :: EvalState -> Int -> [[Int]] -> EvalState
+dropFromAux _ i _ | i < 0 = error "Index out of bounds!"
+dropFromAux (State ys []) _ acc = (State ys acc)
+dropFromAux (State ys (xs:xss)) 0 acc = State ys (acc ++ [drop 1 xs] ++ xss)
+dropFromAux (State ys (xs:xss)) i acc = dropFromAux (State ys xss) (i - 1) (acc ++ [xs])
 
 --Initially all elements in the array are 0 for simplicity sake
 setVarSize :: EvalState -> Int -> EvalState
 setVarSize (State xs xss) i
     | i <= 0 = error "Variable array size must be greater than 0!"
     | otherwise = (State (replicate i 0) xss)
-
 
 --INPUT: state, index to retrieve
 --OUPUT; requested index
