@@ -55,36 +55,44 @@ import Tokens
     int     { TokenInt _ $$ } 
     string  { TokenString _ $$}
 
+%left ';'
+%left '&&' '||'
+%left '!'
 %left '+' '-'
 %left '*' '/'
 %% 
-Exp : Exp ';' Exp {Seq $1 $3}
-    | Exp ';' {Single $1}
-    | varSize '=' int {VarSize $3}
-    | while '(' BExp ')' '{' Exp '}' {While $3 $6}
-    | vars '['int']' '=' IntExp {SetVal $3 $6}
-    | vars '['int']' '*=' IntExp {TimesEq $3 $6}
-    | vars '['int']' '/=' IntExp {DivEq $3 $6}
-    | vars '['int']' '+=' IntExp {AddEq $3 $6}
-    | vars '['int']' '-=' IntExp {SubEq $3 $6} 
-    | vars '['int']' '.' print '('')' {PrintVar $3}
-    | streams '['int']' '.' drop '('')' {DropFrom $3}
-    | end {EndProgram}
+
+
+Exp : end {EndProgram}
+     | while '(' BExp ')' '{' Exp '}' {While $3 $6}
+     | varSize '=' int {VarSize $3}
+     | vars '['int']' '=' IntExp {SetVal $3 $6}
+     | vars '['int']' '*=' IntExp {TimesEq $3 $6}
+     | vars '['int']' '/=' IntExp {DivEq $3 $6}
+     | vars '['int']' '+=' IntExp {AddEq $3 $6}
+     | vars '['int']' '-=' IntExp {SubEq $3 $6} 
+     | vars '['int']' '.' print '('')' {PrintVar $3}
+     | streams '['int']' '.' drop '('')' {DropFrom $3}
+     | Exp ';' Exp {Seq $1 $3}
+     | Exp ';' {Single $1}
+    
 
 --This will always evaluate to an int
-IntExp : '(' IntExp ')' {$2}
-       | IntExp '*' IntExp {Mul $1 $3}
-       | IntExp '/' IntExp {Div $1 $3}
-       | IntExp '+' IntExp {Add $1 $3}
-       | IntExp '-' IntExp {Sub $1 $3}
-       | '-' IntExp {Neg $2}
-       | int {DataInt $1}
-       | vars '['int']' {GetVal $3}
-       | streams '['int']' '.' take '('')' {TakeFrom $3}
-       | streams '['int']' '.' length '('')' {GetLength $3}
+IntExp : int {DataInt $1}
+     | '(' IntExp ')' {$2}
+     | IntExp '*' IntExp {Mul $1 $3}
+     | IntExp '/' IntExp {Div $1 $3}
+     | IntExp '+' IntExp {Add $1 $3}
+     | IntExp '-' IntExp {Sub $1 $3}
+     | '-' IntExp {Neg $2}
+     | vars '['int']' {GetVal $3}
+     | streams '['int']' '.' take '('')' {TakeFrom $3}
+     | streams '['int']' '.' length '('')' {GetLength $3}
+
 
 --This will always evaluate to a boolean
-BExp : '(' BExp ')' {$2}
+BExp : end {EndProgram}
+     |'(' BExp ')' {$2}
      | BExp '&&' BExp {And $1 $3}
      | BExp '||' BExp {Or $1 $3}
      | '!' BExp {Not $2}
@@ -104,6 +112,8 @@ parseError :: [Token] -> a
 parseError [] = error "Unknown Parse Error" 
 parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 
+
+
 data Exp = Seq Exp Exp
          | Single Exp
          | VarSize Int
@@ -120,28 +130,28 @@ data Exp = Seq Exp Exp
          deriving (Show, Read)
 
 data IntExp = Mul IntExp IntExp
-            | Div IntExp IntExp
-            | Add IntExp IntExp
-            | Sub IntExp IntExp 
-            | Neg IntExp
-            | DataInt Int
-            | GetVal Int
-            | TakeFrom Int
-            | GetLength Int
+         | Div IntExp IntExp
+         | Add IntExp IntExp
+         | Sub IntExp IntExp 
+         | Neg IntExp
+         | DataInt Int
+         | GetVal Int
+         | TakeFrom Int
+         | GetLength Int
             deriving (Show, Read)
 
 data BExp = And BExp BExp
-          | Or BExp BExp
-          | Not BExp
-          | DataBool Bool
-          | GThan IntExp IntExp
-          | LThan IntExp IntExp
-          | GThanEQ IntExp IntExp
-          | LThanEQ IntExp IntExp
-          | Equal IntExp IntExp
-          | NEqual IntExp IntExp
-          | StreamEmpty Int
-          | StreamNotEmpty Int
+         | Or BExp BExp
+         | Not BExp
+         | DataBool Bool
+         | GThan IntExp IntExp
+         | LThan IntExp IntExp
+         | GThanEQ IntExp IntExp
+         | LThanEQ IntExp IntExp
+         | Equal IntExp IntExp
+         | NEqual IntExp IntExp
+         | StreamEmpty Int
+         | StreamNotEmpty Int
           deriving (Show, Read)
 
 } 
