@@ -12,7 +12,7 @@ while(streams[0].notEmpty() && steams[1].notEmpty()){
     vars[1].print();
     vars[2].print();
 
-}
+};
 
 end;
 
@@ -35,7 +35,7 @@ while(streams[0].notEmpty() && streams[1].notEmpty() && streams[2].notEmpty()){
     vars[3].print();
     vars[4].print();
 
-} 
+}; 
 
 end;
 
@@ -56,7 +56,7 @@ while(streams[0].notEmpty() && streams[1].notEmpty()){
     vars[0] = streams[0].take();
     vars[0].print();
 
-}
+};
 
 end;
 
@@ -83,7 +83,7 @@ while(streams[0].length() >= 3){
     vars[1].print();
     vars[2].print();
 
-}
+};
 
 end;
 
@@ -98,6 +98,6 @@ while(streams[0].notEmpty()){
     vars[1] = vars[0] + vars[1];
     vars[1].print();
 
-}
+};
 
 end;
