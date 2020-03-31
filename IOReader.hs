@@ -1,9 +1,11 @@
 import System.IO
 import Control.Monad
+import Evaluator
 
 --reader to return result nad to print it afterwards
 main = do result <- reader []
           putStrLn ("The String is " ++ (show result) ++ "\n")
+          
 --reads standard input return standard output
 -- takes the type that we want be the result and then we return IO in order main to read it
 reader :: [[Int]] -> IO [[Int]]
@@ -28,9 +30,3 @@ addToResult result [] = result
 --add to [1,2] 1 from c
 --           result  c
 addToResult (x:xs) (y:ys) = (x ++ y) : addToResult xs ys                          
-
-
-
-
-
-

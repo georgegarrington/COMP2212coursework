@@ -38,78 +38,85 @@ exampleProg3 = Seq (Seq (VarSize 3) (While (StreamNotEmpty 0) (Seq (SetVal 0 (Ta
 exampleProg4 :: Exp
 exampleProg4 = Seq (SetVal 0 (TakeFrom 0)) (PrintVar 0)
 
---INPUT: the current state of evaluation, the list of sub expressions left to evaluate
-evaluate :: EvalState -> [Exp] -> IO ()
+--INPUT: the current state of evaluation, the list of sub expressions left to evalExp
+--OUTPUT: none, the method only prints to standard output
+evalExp :: EvalState -> [Exp] -> IO ()
 
 --All sub expressions have been evaluated, first base case 
-evaluate s [] = do
+evalExp s [] = return ()
     
     --FOR TESTING, delete after
-    print s
-    print "Parse tree consumed. Evaluation finished"
+    --print s
+    --print "Parse tree consumed. Evaluation finished"
 
 --End marker detected, second base case
-evaluate s (EndProgram:es) = do
+evalExp s (EndProgram:es) = return ()
     
-    print s
-    print "End marker detected. Ending evaluation"
+    --print s
+    --print "End marker detected. Ending evaluation"
 
 --FOR TESTING, delete 
-evaluate s ((IncVal i):es) = do
+evalExp s ((IncVal i):es) = do
     
-    print $ (show i) ++ " incremented to: " ++ show (val + 1)
-    evaluate (setIndex s i (DataInt(val + 1))) es
+    --print $ (show i) ++ " incremented to: " ++ show (val + 1)
+    evalExp (setIndex s i (DataInt(val + 1))) es
 
     where 
 
         val = getIndex s i
 
---Evaluate e1 then evaluate e2
-evaluate s ((Seq e1 e2):es) = do
+--Evaluate e1 then evalExp e2
+evalExp s ((Seq e1 e2):es) = do
     
-    print s
-    evaluate s (e1:e2:es)
+    --print s
+    evalExp s (e1:e2:es)
 
-evaluate s ((Single e):es) = do
+--Unwrap the expression from the single data type then evalExp it
+evalExp s ((Single e):es) = do
     
-    print s
-    evaluate s (e:es)
+    --print s
+    evalExp s (e:es)
 
-evaluate s ((VarSize x):es) = do
+--Set the variable size in state s to the value x
+evalExp s ((VarSize x):es) = do
     
-    print s
-    evaluate (setVarSize s x) es
+    --print s
+    evalExp (setVarSize s x) es
 
-evaluate s ((SetVal i x):es) = do
+--Set index i in state s to value x
+evalExp s ((SetVal i x):es) = do
     
-    print s
-    print $ "setting index " ++ (show i) ++ " to value: " ++ (show val)
+    --print s
+    --print $ "setting index " ++ (show i) ++ " to value: " ++ (show val)
    
-    evaluate (setIndex state i (DataInt val)) es
+    evalExp (setIndex state i (DataInt val)) es
 
     where 
 
         val = snd $ evalInt s x
         state = fst $ evalInt s x
 
-evaluate s ((PrintVar x):es) = do 
+--Print variable index x
+evalExp s ((PrintVar x):es) = do 
 
-    print s
+    --print s
     print (getIndex s x)
-    evaluate s es
+    evalExp s es
 
-evaluate s ((DropFrom x):es) = do
+--Drop the head from stream x
+evalExp s ((DropFrom x):es) = do
     
-    print s
-    evaluate (dropFrom s x) es
+    --print s
+    evalExp (dropFrom s x) es
 
-evaluate s ((While b1 e):es) = do
+--If state s means b1 evalutes to true then carry out expression e and reassess after
+evalExp s ((While b1 e):es) = do
 
-    print s
-    if(evalBool s b1) then (evaluate s (e:(While b1 e):es)) else (print $ (show s) ++ " Loop finished")
+    --print s
+    if(evalBool s b1) then (evalExp s (e:(While b1 e):es)) else evalExp s es
 
 
---INPUT: state, boolean expression to evaluate
+--INPUT: state, boolean expression to evalExp
 --OUTPUT: evaluated boolean
 evalBool :: EvalState -> BExp -> Bool
 
@@ -127,12 +134,11 @@ evalBool s (NEqual ix1 ix2) = (evalIntStateless s ix1) /= (evalIntStateless s ix
 evalBool s (StreamEmpty i) = isEmpty s i
 evalBool s (StreamNotEmpty i) = notEmpty s i
 
-
 --Unwraps the evaluated int from its tate tuple
 evalIntStateless :: EvalState -> IntExp -> Int
 evalIntStateless s e = snd $ evalInt s e
 
---INPUT: state, int expression to evaluate
+--INPUT: state, int expression to evalExp
 --OUTPUT: tuple of resulting state and evaluated int
 evalInt :: EvalState -> IntExp -> (EvalState, Int)
 
