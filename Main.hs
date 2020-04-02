@@ -9,7 +9,8 @@ import Control.Monad
 
 --Simple data type to store the state of computation
 --CONTAINS: The variable array, the list of streams
-type State =  ([Int],[[Int]])
+type State =  ([Var],[[Int]])
+type Var = (String,Int)
 
 main = do 
 
@@ -19,14 +20,6 @@ main = do
     state <- return ([],streams)
     rootExp <- return (parse $ (alexScanTokens string))
     evalExp state [rootExp]
-
-{-
-   [path] <- getArgs
-   string <- readFile path
-   streams <- reader []
-   state <- return ([],streams)
-   evalExp state [parse $ (alexScanTokens string)]-}
-
 
 --reads standard input return standard output
 -- takes the type that we want be the result and then we return IO in order main to read it
@@ -71,23 +64,23 @@ evalExp s (EndProgram:es) = return ()
     --print "End marker detected. Ending evaluation"
 
 --Increment variable index i
-evalExp s ((IncIndex i):es) = do
+evalExp s ((IncVar var):es) = do
     
     --print $ (show i) ++ " incremented to: " ++ show (val + 1)
-    evalExp (setIndex s i (DataInt(val + 1))) es
+    evalExp (setVar s var (DataInt(val + 1))) es
 
     where 
 
-        val = getIndex s i
+        val = getVar s var
 
 --Decrement variable index i
-evalExp s ((DecIndex i):es) = do
+evalExp s ((DecVar var):es) = do
 
-    evalExp (setIndex s i (DataInt(val - 1))) es
+    evalExp (setVar s var (DataInt(val - 1))) es
 
     where
 
-        val = getIndex s i
+        val = getVar s var
 
 --evalExp e1 then evalExp e2
 evalExp s ((Seq e1 e2):es) = do
@@ -101,63 +94,58 @@ evalExp s ((Single e):es) = do
     --print s
     evalExp s (e:es)
 
---Set the variable array size in state s to the value x
-evalExp s ((VarSize x):es) = do
-    
-    --print s
-    evalExp (setVarSize s x) es
-
 --Set the value of variable index j to the head of stream i, and remove it from the stream
-evalExp s ((TakeFrom i j):es) = do
+evalExp s ((TakeFrom i var):es) = do
 
-    evalExp (setIndex (dropFrom s i) j (DataInt val)) es
+    evalExp (setVar (dropFrom s i) var (DataInt val)) es
 
     where
         
         val = peekFrom s i 
 
 --Set index i in state s to value x
-evalExp s ((SetIndex i x):es) = do
+evalExp s ((SetVar var x):es) = do
     
     --print s
     --print $ "setting index " ++ (show i) ++ " to value: " ++ (show val)
    
-    evalExp (setIndex s i (DataInt val)) es
+    evalExp (setVar s var (DataInt val)) es
 
     where 
 
         val = evalInt s x
 
-evalExp s ((TimesEq i x):es) = do
+evalExp s ((TimesEq var x):es) = do
 
-    evalExp (setIndex s i (DataInt ((getIndex s i) * val))) es
-
-    where val = evalInt s x
-
-evalExp s ((DivEq i x):es) = do
-
-    evalExp (setIndex s i (DataInt ((getIndex s i) `div` val))) es
+    evalExp (setVar s var (DataInt ((getVar s var) * val))) es
 
     where val = evalInt s x
 
-evalExp s ((AddEq i x):es) = do
+evalExp s ((DivEq var x):es) = do
 
-    evalExp (setIndex s i (DataInt ((getIndex s i) + val))) es
+    evalExp (setVar s var (DataInt ((getVar s var) `div` val))) es
 
     where val = evalInt s x
 
-evalExp s ((SubEq i x):es) = do
+evalExp s ((AddEq var x):es) = do
 
-    evalExp (setIndex s i (DataInt ((getIndex s i) - val))) es
+    evalExp (setVar s var (DataInt ((getVar s var) + val))) es
+
+    where val = evalInt s x
+
+evalExp s ((SubEq var x):es) = do
+
+    evalExp (setVar s var (DataInt ((getVar s var) - val))) es
 
     where val = evalInt s x
 
 --Print variable index 
-evalExp s ((PrintIndex x):es) = do 
+evalExp s ((PrintVar str):es) = do 
 
-    --print s
-    print (getIndex s x)
+    print $ getVar s str
     evalExp s es
+
+evalExp s ((PrintAll args):es) = evalExp s ((getPrintExprList args) ++ es)
 
 --Drop the head from stream x
 evalExp s ((DropFrom x):es) = do
@@ -174,6 +162,12 @@ evalExp s ((While b1 e):es) = do
 
     --print s
     if(evalBool s b1) then (evalExp s (e:(While b1 e):es)) else evalExp s es
+
+getPrintExprList :: ArgList -> [Exp]
+
+--base case
+getPrintExprList (EndNode str) = (PrintVar str):[]
+getPrintExprList (ListNode str list) = (PrintVar str):(getPrintExprList list)
 
 --INPUT: state, boolean expression to evaluate
 --OUTPUT: evaluated boolean
@@ -205,7 +199,7 @@ evalInt s (Div e1 e2) = (evalInt s e1) `div` (evalInt s e2)
 evalInt s (Add e1 e2) = (evalInt s e1) + (evalInt s e2)
 evalInt s (Sub e1 e2) = (evalInt s e1) - (evalInt s e2)
 evalInt s (Neg e) = (-1) * (evalInt s e)
-evalInt s (GetIndex i) = getIndex s i
+evalInt s (GetVar str) = getVar s str
 evalInt s (GetLength i) = getStreamLength s i
 
 
@@ -233,42 +227,28 @@ dropFromAux (ys, (xs:xss)) 0 acc = (ys, (acc ++ [drop 1 xs] ++ xss))
 dropFromAux (ys, (xs:xss)) i acc = dropFromAux (ys, xss) (i - 1) (acc ++ [xs])
 
 
---Initially all elements in the array are 0 for simplicity sake
-setVarSize :: State -> Int -> State
-setVarSize (xs, xss) i
+--INPUT: state, the string of the variable
+--OUTPUT: state, the value of the variable
+getVar :: State -> String -> Int
+getVar ([],_) str = error "Var does not exist"
+getVar (((str1,x):xs),_) str2
 
-    | i <= 0 = error "Variable array size must be greater than 0!"
-    | otherwise = ((replicate i 0), xss)
-
-
---INPUT: state, index to retrieve
---OUPUT; requested index
-getIndex :: State -> Int -> Int
-getIndex (xs, _) i 
-
-    | i < 0 || i >= (length xs) = error "Index out of bounds!"
-    | otherwise = xs !! i
+    | str1 == str2 = x
+    | otherwise = getVar (xs,[]) str2
 
 
---INPUT: state, index to change, new value
+--INPUT: state, variable name to change or add, value of the variable
 --OUTPUT: resulting state
-setIndex :: State -> Int -> IntExp -> State
-setIndex (xs, xss) i y = ((setNth i val xs), xss) 
+setVar :: State -> String -> IntExp -> State
+setVar s var inX = setVarAux s var inX []
 
-    where
+--Helper method using an accumulator
+setVarAux :: State -> String -> IntExp -> [Var] -> State
+setVarAux ([],streams) var inX acc = (((var,(evalInt ([],streams) inX)):acc),streams)
+setVarAux ((str,val):vars,streams) var inX acc 
 
-        val = evalInt (xs, xss) y
-
-
---INPUT: index to change, new value, list
---OUTPUT: resulting list 
-setNth :: Int -> a -> [a] -> [a]
-setNth i y xs = setNthAux i y xs []
-
-setNthAux :: Int -> a -> [a] -> [a] -> [a]
-setNthAux 0 y (x:xs) acc = acc ++ [y] ++ xs
-setNthAux i y (x:xs) acc = setNthAux (i - 1) y xs (acc ++ [x])
-
+    | str == var = (acc ++ [(str,(evalInt ((str,val):vars,streams) inX))] ++ vars, streams)
+    | otherwise = setVarAux (vars,streams) var inX ((str,val):acc)
 
 --INPUT: state, which stream is being queried
 --OUTPUT: whether or not requested stream is empty

@@ -15,6 +15,7 @@ import Tokens
     '{'     { TokenLCurly _ }
     '}'     { TokenRCurly _ }
     '.'     { TokenDot _ }
+    ','     { TokenComma _ }
     ';'     { TokenSeq _ }
     '&&'    { TokenAnd _ }
     '||'    { TokenOr _ }
@@ -36,8 +37,7 @@ import Tokens
     empty   { TokenEmpty _ }
     notEmpty { TokenNotEmpty _ }
     print   { TokenPrint _ }
-    varSize { TokenVarSize _ }
-    vars    { TokenVars _ }
+    printAll { TokenPrintAll _ }
     streams { TokenStreams _ }
     while   { TokenWhile _ }
     take    { TokenTake _ }
@@ -49,6 +49,7 @@ import Tokens
     false   { TokenFalse _ }
     end     { TokenEnd _ }
     int     { TokenInt _ $$ } 
+    string  { TokenString _ $$ }
 
 %left ';'
 %left '&&' '||'
@@ -59,21 +60,24 @@ import Tokens
 %% 
 Exp : Exp ';' Exp {Seq $1 $3}
      | Exp ';' {Single $1}
-     | varSize '=' int {VarSize $3}
      | while '(' BExp ')' '{' Exp '}' {While $3 $6}
      | if '(' BExp ')' then '{' Exp '}' else '{' Exp '}' {IfEl $3 $7 $11}
-     | vars '['int']' '++' {IncIndex $3}
-     | vars '['int']' '--' {DecIndex $3}
-     | vars '['int']' '=' streams '['int']' '.' take '('')' {TakeFrom $8 $3}
-     | vars '['int']' '=' IntExp {SetIndex $3 $6}
-     | vars '['int']' '*=' IntExp {TimesEq $3 $6}
-     | vars '['int']' '/=' IntExp {DivEq $3 $6}
-     | vars '['int']' '+=' IntExp {AddEq $3 $6}
-     | vars '['int']' '-=' IntExp {SubEq $3 $6} 
-     | vars '['int']' '.' print '('')' {PrintIndex $3}
+     | string '++' {IncVar $1}
+     | string '--' {DecVar $1}
+     | string '=' streams '['int']' '.' take '('')' {TakeFrom $5 $1}
+     | string '=' IntExp {SetVar $1 $3}
+     | string '*=' IntExp {TimesEq $1 $3}
+     | string '/=' IntExp {DivEq $1 $3}
+     | string '+=' IntExp {AddEq $1 $3}
+     | string '-=' IntExp {SubEq $1 $3} 
+     | print '('string')' {PrintVar $3}
+     | printAll '(' ArgList ')' {PrintAll $3}
      | streams '['int']' '.' drop '('')' {DropFrom $3}
      | end {EndProgram}
     
+ArgList : string ',' ArgList {ListNode $1 $3}
+        | string {EndNode $1}
+
 --This will always evaluate to an int, it is an int "type"
 IntExp : '(' IntExp ')' {$2}
     | IntExp '*' IntExp {Mul $1 $3}
@@ -82,7 +86,7 @@ IntExp : '(' IntExp ')' {$2}
     | IntExp '-' IntExp {Sub $1 $3}
     | '-' IntExp %prec NEG {Neg $2}
     | int {DataInt $1}
-    | vars '['int']' {GetIndex $3}
+    | string {GetVar $1}
     | streams '['int']' '.' length '('')' {GetLength $3}
 
 --This will always evaluate to a boolean, it is a boolean "type"
@@ -108,21 +112,25 @@ parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 
 data Exp = Seq Exp Exp
          | Single Exp
-         | VarSize Int
          | While BExp Exp
          | IfEl BExp Exp Exp
-         | IncIndex Int
-         | DecIndex Int
-         | TakeFrom Int Int
-         | SetIndex Int IntExp
-         | TimesEq Int IntExp
-         | DivEq Int IntExp
-         | AddEq Int IntExp
-         | SubEq Int IntExp
-         | PrintIndex Int
+         | IncVar String
+         | DecVar String
+         | TakeFrom Int String
+         | SetVar String IntExp
+         | TimesEq String IntExp
+         | DivEq String IntExp
+         | AddEq String IntExp
+         | SubEq String IntExp
+         | PrintVar String
+         | PrintAll ArgList
          | DropFrom Int
          | EndProgram
          deriving (Show, Read)
+
+data ArgList = ListNode String ArgList
+             | EndNode String
+             deriving (Show, Read)
 
 data IntExp = Mul IntExp IntExp
          | Div IntExp IntExp
@@ -130,7 +138,7 @@ data IntExp = Mul IntExp IntExp
          | Sub IntExp IntExp 
          | Neg IntExp
          | DataInt Int
-         | GetIndex Int
+         | GetVar String
          | GetLength Int
             deriving (Show, Read)
 

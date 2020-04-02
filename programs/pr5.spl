@@ -1,21 +1,11 @@
-varSize = 2;
-vars[1] = 0;
+sum = 0;
 
 while(streams[0].notEmpty()){
 
-    vars[0] = streams[0].take();
-    vars[1] = vars[0] + vars[1];
-    vars[1].print();
+    streamVal = streams[0].take();
+    sum += streamVal;
+    print(sum);
 
 };
 
 end;
-
-varSize = 2;
-vars[1] = 0;
-
-for(var in streams[0]){
-
-
-
-}
