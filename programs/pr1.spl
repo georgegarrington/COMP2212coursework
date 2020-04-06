@@ -1,8 +1,8 @@
 while(streams[0].notEmpty() && streams[1].notEmpty()){
 
-    int a = streams[0].take();
-    int b = streams[0].take();
-    int c = streams[1].take();
+    a = streams[0].take();
+    b = streams[0].take();
+    c = streams[1].take();
     printAll(a, b, c);
 
 };

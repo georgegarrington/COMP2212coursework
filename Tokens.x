@@ -45,6 +45,7 @@ tokens :-
   \+             {\p -> \s -> TokenPlus p}
   \*             {\p -> \s -> TokenTimes p}
   \/             {\p -> \s -> TokenDiv p}
+  \%             {\p -> \s -> TokenMod p}
   \=             {\p -> \s -> TokenEq p}
   \>             {\p -> \s -> TokenGt p}
   \<             {\p -> \s -> TokenLt p}
@@ -98,6 +99,7 @@ data Token =
   TokenPlus AlexPosn           |
   TokenTimes AlexPosn          |
   TokenDiv AlexPosn            |
+  TokenMod AlexPosn            |
   TokenEq AlexPosn             | 
   TokenGt AlexPosn             |
   TokenLt AlexPosn             |  
@@ -146,6 +148,7 @@ tokenPosn (TokenMinus  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenPlus (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenTimes (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenDiv (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenMod (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenGt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)

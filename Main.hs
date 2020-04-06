@@ -64,78 +64,63 @@ evalExp s (EndProgram:es) = return ()
     --print "End marker detected. Ending evaluation"
 
 --Increment variable index i
-evalExp s ((IncVar var):es) = do
+evalExp s ((IncVar var):es) = evalExp (setVar s var (DataInt(val + 1))) es
     
     --print $ (show i) ++ " incremented to: " ++ show (val + 1)
-    evalExp (setVar s var (DataInt(val + 1))) es
 
     where 
 
         val = getVar s var
 
 --Decrement variable index i
-evalExp s ((DecVar var):es) = do
-
-    evalExp (setVar s var (DataInt(val - 1))) es
+evalExp s ((DecVar var):es) = evalExp (setVar s var (DataInt(val - 1))) es
 
     where
 
         val = getVar s var
 
---evalExp e1 then evalExp e2
-evalExp s ((Seq e1 e2):es) = do
+--evaluate e1 then evaluate e2
+evalExp s ((Seq e1 e2):es) = evalExp s (e1:e2:es)
     
     --print s
-    evalExp s (e1:e2:es)
+    
 
 --Unwrap the expression from the single data type then evaluate it it
-evalExp s ((Single e):es) = do
+evalExp s ((Single e):es) = evalExp s (e:es)
     
     --print s
-    evalExp s (e:es)
+    
 
 --Set the value of variable index j to the head of stream i, and remove it from the stream
-evalExp s ((TakeFrom i var):es) = do
-
-    evalExp (setVar (dropFrom s i) var (DataInt val)) es
+evalExp s ((TakeFrom i var):es) = evalExp (setVar (dropFrom s i) var (DataInt val)) es
 
     where
         
         val = peekFrom s i 
 
 --Set index i in state s to value x
-evalExp s ((SetVar var x):es) = do
+evalExp s ((SetVar var x):es) = evalExp (setVar s var (DataInt val)) es
     
     --print s
     --print $ "setting index " ++ (show i) ++ " to value: " ++ (show val)
    
-    evalExp (setVar s var (DataInt val)) es
-
     where 
 
         val = evalInt s x
 
-evalExp s ((TimesEq var x):es) = do
-
-    evalExp (setVar s var (DataInt ((getVar s var) * val))) es
+evalExp s ((TimesEq var x):es) = evalExp (setVar s var (DataInt ((getVar s var) * val))) es
 
     where val = evalInt s x
 
-evalExp s ((DivEq var x):es) = do
-
-    evalExp (setVar s var (DataInt ((getVar s var) `div` val))) es
+evalExp s ((DivEq var x):es) = evalExp (setVar s var (DataInt ((getVar s var) `div` val))) es
 
     where val = evalInt s x
 
-evalExp s ((AddEq var x):es) = do
-
-    evalExp (setVar s var (DataInt ((getVar s var) + val))) es
+evalExp s ((AddEq var x):es) = evalExp (setVar s var (DataInt ((getVar s var) + val))) es
 
     where val = evalInt s x
 
-evalExp s ((SubEq var x):es) = do
-
-    evalExp (setVar s var (DataInt ((getVar s var) - val))) es
+evalExp s ((SubEq var x):es) = evalExp (setVar s var (DataInt ((getVar s var) - val))) es
 
     where val = evalInt s x
 
@@ -148,25 +133,25 @@ evalExp s ((PrintVar str):es) = do
 evalExp s ((PrintAll args):es) = evalExp s ((getPrintExprList args) ++ es)
 
 --Drop the head from stream x
-evalExp s ((DropFrom x):es) = do
+evalExp s ((DropFrom x):es) = evalExp (dropFrom s x) es
     
     --print s
-    evalExp (dropFrom s x) es
+    
 
-evalExp s ((IfEl b e1 e2):es) = do
-
-    if(evalBool s b) then evalExp s (e1:es) else evalExp s (e2:es)
+evalExp s ((IfEl b e1 e2):es) = if(evalBool s b) then evalExp s (e1:es) else evalExp s (e2:es)
 
 --If state s means b1 evalutes to true then carry out expression e and reassess after
-evalExp s ((While b1 e):es) = do
+evalExp s ((While b1 e):es) = if(evalBool s b1) then (evalExp s (e:(While b1 e):es)) else evalExp s es
 
     --print s
-    if(evalBool s b1) then (evalExp s (e:(While b1 e):es)) else evalExp s es
+    
 
+--INPUT: an arg list data type which represents a list of variable names
+--OUTPUT: a list of print expressions corresponding to each of these variable names
 getPrintExprList :: ArgList -> [Exp]
 
 --base case
-getPrintExprList (EndNode str) = (PrintVar str):[]
+getPrintExprList (EndNode str) = [PrintVar str]
 getPrintExprList (ListNode str list) = (PrintVar str):(getPrintExprList list)
 
 --INPUT: state, boolean expression to evaluate
@@ -198,21 +183,34 @@ evalInt s (Mul e1 e2) = (evalInt s e1) * (evalInt s e2)
 evalInt s (Div e1 e2) = (evalInt s e1) `div` (evalInt s e2)
 evalInt s (Add e1 e2) = (evalInt s e1) + (evalInt s e2)
 evalInt s (Sub e1 e2) = (evalInt s e1) - (evalInt s e2)
+evalInt s (Mod e1 e2) = (evalInt s e1) `mod` (evalInt s e2)
 evalInt s (Neg e) = (-1) * (evalInt s e)
 evalInt s (GetVar str) = getVar s str
 evalInt s (GetLength i) = getStreamLength s i
 
+--FOR TESTING
+evalIntSimple :: IntExp -> Int
+
+--Base case
+evalIntSimple (DataInt x) = x
+evalIntSimple (Mod e1 e2) = (evalIntSimple e1) `mod` (evalIntSimple e2)
 
 --INPUT: state, which stream is being queried
 --OUTPUT: length of requested stream
 getStreamLength :: State -> Int -> Int
-getStreamLength (_, xss) i = length (xss !! i)
+getStreamLength (_, xss) i 
+
+    | i >= (length xss) || i < 0 = error "Index out of bounds!"
+    | otherwise = length (xss !! i)
 
     
 --INPUT: state, which stream to peak from
 --OUTPUT: head of requested stream (without it removed)
 peekFrom :: State -> Int -> Int
-peekFrom (_, xss) i = head (xss !! i)
+peekFrom (_, xss) i 
+
+    | i >= (length xss) || i < 0 = error "Index out of bounds!"
+    | otherwise = head (xss !! i)
 
 
 --INPUT: state, which stream to drop from
@@ -221,7 +219,7 @@ dropFrom :: State -> Int -> State
 dropFrom s i = dropFromAux s i []
 
 dropFromAux :: State -> Int -> [[Int]] -> State
-dropFromAux _ i _ | i < 0 = error "Index out of bounds!"
+dropFromAux (ys, xss) i _ | i < 0 || i >= (length xss) = error "Index out of bounds!"
 dropFromAux (ys, []) _ acc = (ys, acc)
 dropFromAux (ys, (xs:xss)) 0 acc = (ys, (acc ++ [drop 1 xs] ++ xss))
 dropFromAux (ys, (xs:xss)) i acc = dropFromAux (ys, xss) (i - 1) (acc ++ [xs])
