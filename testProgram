@@ -1,5 +1,0 @@
-while(streams[0].empty()) {
-
-    end;
-
-};

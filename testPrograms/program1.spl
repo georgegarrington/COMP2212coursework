@@ -1,0 +1,11 @@
+while(streams[0].notEmpty() && streams[1].notEmpty() && streams[2].notEmpty()){
+
+    a = streams[0].take();
+    b = streams[0].take();
+    c = streams[1].take();
+    d = streams[2].take();
+    e = streams[2].take();
+    printAll(a, b, c, d, e);
+
+};
+

@@ -6,6 +6,7 @@ import System.Environment
 import Control.Exception
 import System.IO
 import Control.Monad
+import Text.Read
 
 --Simple data type to store the state of computation
 --CONTAINS: The variable array, the list of streams
@@ -17,9 +18,28 @@ main = do
     [path] <- getArgs
     string <- readFile path
     streams <- reader []
+    --testPrint streams
+
+    if(length streams == 0) then error "Please make sure you have provided stream data!" else do
+    
     state <- return ([],streams)
     rootExp <- return (parse $ (alexScanTokens string))
     evalExp state [rootExp]
+
+{-
+testPrint :: [[Int]] -> IO ()
+testPrint [] = return ()
+testPrint (xs:xss) = do
+
+    print xs
+    testPrint xss
+
+print :: Show a => [a] -> IO ()
+print [] = return ()
+print (x:xs) = do
+    
+    print x
+    print xs-}
 
 --reads standard input return standard output
 -- takes the type that we want be the result and then we return IO in order main to read it
@@ -35,7 +55,16 @@ reader result = do eof <- isEOF
                               --map each element of b to become a list from ["1", "5"]  into [["1"], ["5"]]
                               --read convert the string into an int from ["1"] into [1]
                               let c = map (\x -> [read x :: Int]) b
-                              reader (addToResult result c)
+                              if(not $ checkIfAllDigits b) then error "Invalid values detected in stream input, only Ints are permitted!" else reader (addToResult result c)
+
+checkIfAllDigits :: [String] -> Bool
+checkIfAllDigits [] = True
+checkIfAllDigits (x:xs)
+
+    | val == Nothing = False
+    | otherwise = checkIfAllDigits xs
+
+    where val = readMaybe x :: Maybe Int
 
 addToResult :: [[Int]] -> [[Int]] -> [[Int]]
 addToResult [] c = c
@@ -172,7 +201,6 @@ evalBool s (NEqual ix1 ix2) = (evalInt s ix1) /= (evalInt s ix2)
 evalBool s (StreamEmpty i) = isEmpty s i
 evalBool s (StreamNotEmpty i) = notEmpty s i
 
-
 --INPUT: state, int expression to evaluate
 --OUTPUT: evaluated int
 evalInt :: State -> IntExp -> Int
@@ -188,19 +216,12 @@ evalInt s (Neg e) = (-1) * (evalInt s e)
 evalInt s (GetVar str) = getVar s str
 evalInt s (GetLength i) = getStreamLength s i
 
---FOR TESTING
-evalIntSimple :: IntExp -> Int
-
---Base case
-evalIntSimple (DataInt x) = x
-evalIntSimple (Mod e1 e2) = (evalIntSimple e1) `mod` (evalIntSimple e2)
-
 --INPUT: state, which stream is being queried
 --OUTPUT: length of requested stream
 getStreamLength :: State -> Int -> Int
 getStreamLength (_, xss) i 
 
-    | i >= (length xss) || i < 0 = error "Index out of bounds!"
+    | i >= (length xss) || i < 0 = error "Stream does not exist!"
     | otherwise = length (xss !! i)
 
     
@@ -209,7 +230,8 @@ getStreamLength (_, xss) i
 peekFrom :: State -> Int -> Int
 peekFrom (_, xss) i 
 
-    | i >= (length xss) || i < 0 = error "Index out of bounds!"
+    | i >= (length xss) || i < 0 = error "Stream does not exist!"
+    | (xss !! i) == [] = error "No element found in stream!"
     | otherwise = head (xss !! i)
 
 
@@ -219,16 +241,20 @@ dropFrom :: State -> Int -> State
 dropFrom s i = dropFromAux s i []
 
 dropFromAux :: State -> Int -> [[Int]] -> State
-dropFromAux (ys, xss) i _ | i < 0 || i >= (length xss) = error "Index out of bounds!"
+dropFromAux (ys, xss) i _ | i < 0 || i >= (length xss) = error "Stream does not exist!"
 dropFromAux (ys, []) _ acc = (ys, acc)
-dropFromAux (ys, (xs:xss)) 0 acc = (ys, (acc ++ [drop 1 xs] ++ xss))
+dropFromAux (ys, (xs:xss)) 0 acc 
+
+    | xs == [] = error "No element found in stream!"
+    | otherwise = (ys, (acc ++ [drop 1 xs] ++ xss))
+
 dropFromAux (ys, (xs:xss)) i acc = dropFromAux (ys, xss) (i - 1) (acc ++ [xs])
 
 
 --INPUT: state, the string of the variable
 --OUTPUT: state, the value of the variable
 getVar :: State -> String -> Int
-getVar ([],_) str = error "Var does not exist"
+getVar ([],_) str = error "Var does not exist!"
 getVar (((str1,x):xs),_) str2
 
     | str1 == str2 = x
@@ -251,7 +277,7 @@ setVarAux ((str,val):vars,streams) var inX acc
 --INPUT: state, which stream is being queried
 --OUTPUT: whether or not requested stream is empty
 isEmpty :: State -> Int -> Bool
-isEmpty (_, []) _ = True 
+isEmpty (_, []) _ = error "Stream not found!" 
 isEmpty (_, (xs:xss)) 0
     | xs == [] = True
     | otherwise = False
