@@ -27,6 +27,7 @@ import Tokens
     '*='    { TokenTimesEq _ }
     '-='    { TokenSubEq _ }
     '+='    { TokenPlusEq _ }
+    '^'     { TokenExp _ }
     '-'     { TokenMinus _ }
     '+'     { TokenPlus _ }
     '='     { TokenEq _ }
@@ -57,7 +58,7 @@ import Tokens
 %left '&&' '||'
 %left '!'
 %left '+' '-'
-%left '*' '/' '%'
+%left '*' '/' '%' '^'
 %left NEG
 %% 
 Exp : Exp ';' Exp {Seq $1 $3}
@@ -88,6 +89,7 @@ IntExp : '(' IntExp ')' {$2}
     | IntExp '+' IntExp {Add $1 $3}
     | IntExp '-' IntExp {Sub $1 $3}
     | IntExp '%' IntExp {Mod $1 $3}
+    | IntExp '^' IntExp {Expo $1 $3}
     | '-' IntExp %prec NEG {Neg $2}
     | int {DataInt $1}
     | string {GetVar $1}
@@ -141,6 +143,7 @@ data IntExp = Mul IntExp IntExp
          | Div IntExp IntExp
          | Add IntExp IntExp
          | Sub IntExp IntExp 
+         | Expo IntExp IntExp
          | Mod IntExp IntExp
          | Neg IntExp
          | DataInt Int

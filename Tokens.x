@@ -42,6 +42,7 @@ tokens :-
   "+="           {\p -> \s -> TokenPlusEq p} 
   "++"           {\p -> \s -> TokenInc p}
   "--"           {\p -> \s -> TokenDec p}
+  \^             {\p -> \s -> TokenExp p}
   \-             {\p -> \s -> TokenMinus p}
   \+             {\p -> \s -> TokenPlus p}
   \*             {\p -> \s -> TokenTimes p}
@@ -97,6 +98,7 @@ data Token =
   TokenPlusEq AlexPosn         |
   TokenInc AlexPosn            |
   TokenDec AlexPosn            |
+  TokenExp AlexPosn            |
   TokenMinus AlexPosn          | 
   TokenPlus AlexPosn           |
   TokenTimes AlexPosn          |
@@ -147,6 +149,7 @@ tokenPosn (TokenSubEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenPlusEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenInc (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenDec (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenExp (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenMinus  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenPlus (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenTimes (AlexPn a l c)) = show(l) ++ ":" ++ show(c)

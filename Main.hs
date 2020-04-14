@@ -215,6 +215,7 @@ evalInt s (Div e1 e2) = (evalInt s e1) `div` (evalInt s e2)
 evalInt s (Add e1 e2) = (evalInt s e1) + (evalInt s e2)
 evalInt s (Sub e1 e2) = (evalInt s e1) - (evalInt s e2)
 evalInt s (Mod e1 e2) = (evalInt s e1) `mod` (evalInt s e2)
+evalInt s (Expo e1 e2) = (evalInt s e1) ^ (evalInt s e2)
 evalInt s (Neg e) = (-1) * (evalInt s e)
 evalInt s (GetVar str) = getVar s str
 evalInt s (GetLength i) = getStreamLength s i
