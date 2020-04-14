@@ -12,7 +12,8 @@ tokens :-
   "--".*        ; 
   --$newLine       {\p -> \s -> TokenNewLine p}
   $white+         ;
-  while          {\p ->  \s -> TokenWhile p} --new
+  while          {\p -> \s -> TokenWhile p} --new
+  for            {\p -> \s -> TokenFor p } --new
   notEmpty       {\p -> \s -> TokenNotEmpty p} --new
   empty          {\p -> \s -> TokenEmpty p}
   streams        {\p -> \s -> TokenStreams p} --new
@@ -64,8 +65,9 @@ tokens :-
 -- The token type: 
 data Token = 
 
-  --TokenNewLine AlexPosn        |
+  --TokenNewLine AlexPosn        | --Dont think this is needed
   TokenWhile AlexPosn          |
+  TokenFor AlexPosn            |
   TokenNotEmpty AlexPosn       |
   TokenEmpty AlexPosn          |
   TokenStreams AlexPosn        |
@@ -116,6 +118,7 @@ data Token =
 tokenPosn :: Token -> String
 --tokenPosn (TokenNewLine  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenWhile  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenFor  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenNotEmpty  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenEmpty  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenStreams  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)

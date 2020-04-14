@@ -41,6 +41,7 @@ import Tokens
     printAll { TokenPrintAll _ }
     streams { TokenStreams _ }
     while   { TokenWhile _ }
+    for     { TokenFor _ }
     take    { TokenTake _ }
     drop    { TokenDrop _ }
     if      { TokenIf _ } 
@@ -61,6 +62,7 @@ import Tokens
 %% 
 Exp : Exp ';' Exp {Seq $1 $3}
      | Exp ';' {Single $1}
+     | for '(' Exp ';' BExp ';' Exp ')' '{' Exp '}' {For $3 $5 $7 $10}
      | while '(' BExp ')' '{' Exp '}' {While $3 $6}
      | if '(' BExp ')' then '{' Exp '}' else '{' Exp '}' {IfEl $3 $7 $11}
      | string '++' {IncVar $1}
@@ -114,6 +116,7 @@ parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 
 data Exp = Seq Exp Exp
          | Single Exp
+         | For Exp BExp Exp Exp
          | While BExp Exp
          | IfEl BExp Exp Exp
          | IncVar String

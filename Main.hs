@@ -174,6 +174,9 @@ evalExp s ((While b1 e):es) = if(evalBool s b1) then (evalExp s (e:(While b1 e):
 
     --print s
     
+evalExp s ((For init b incr e):es) = do 
+
+    evalExp s (init:(While b (Seq e incr)):es)
 
 --INPUT: an arg list data type which represents a list of variable names
 --OUTPUT: a list of print expressions corresponding to each of these variable names
