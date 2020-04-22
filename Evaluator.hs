@@ -72,9 +72,9 @@ evalExp s ((SubEq var x):es) = evalExp (setVar s var (DataInt ((getVar s var) - 
     where val = evalInt s x
 
 --Print variable index 
-evalExp s ((PrintVar str):es) = do 
+evalExp s ((PrintVar inX):es) = do 
 
-    print $ getVar s str
+    print $ evalInt s inX
     evalExp s es
 
 evalExp s ((PrintAll args):es) = evalExp s ((getPrintExprList args) ++ es)
@@ -102,8 +102,8 @@ evalExp s ((For init b incr e):es) = do
 getPrintExprList :: ArgList -> [Exp]
 
 --base case
-getPrintExprList (EndNode str) = [PrintVar str]
-getPrintExprList (ListNode str list) = (PrintVar str):(getPrintExprList list)
+getPrintExprList (EndNode inX) = [PrintVar inX]
+getPrintExprList (ListNode inX list) = (PrintVar inX):(getPrintExprList list)
 
 
 --INPUT: state, boolean expression to evaluate

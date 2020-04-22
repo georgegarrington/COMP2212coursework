@@ -1,5 +1,4 @@
-var = 0;
-print(var);
+print(0);
 
 while(streams[0].notEmpty() && streams[1].notEmpty()){
 

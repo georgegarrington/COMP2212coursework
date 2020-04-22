@@ -75,14 +75,14 @@ Exp : Exp ';' Exp {Seq $1 $3}
      | string '/=' IntExp {DivEq $1 $3}
      | string '+=' IntExp {AddEq $1 $3}
      | string '-=' IntExp {SubEq $1 $3} 
-     | print '('string')' {PrintVar $3}
+     | print '('IntExp')' {PrintVar $3}
      | printAll '(' ArgList ')' {PrintAll $3}
      | streams '['int']' '.' drop '('')' {DropFrom $3}
      | nothing {DataNothing}
      | end {EndProgram}
     
-ArgList : string ',' ArgList {ListNode $1 $3}
-        | string {EndNode $1}
+ArgList : IntExp ',' ArgList {ListNode $1 $3}
+        | IntExp {EndNode $1}
 
 --This will always evaluate to an int, it is an int "type"
 IntExp : '(' IntExp ')' %prec BRAC {$2}
@@ -119,7 +119,6 @@ parseError [] = error "Unknown Parse Error"
 parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 
 data Exp = Seq Exp Exp
-         | Single Exp
          | For Exp BExp Exp Exp
          | While BExp Exp
          | IfEl BExp Exp Exp
@@ -131,15 +130,15 @@ data Exp = Seq Exp Exp
          | DivEq String IntExp
          | AddEq String IntExp
          | SubEq String IntExp
-         | PrintVar String
+         | PrintVar IntExp
          | PrintAll ArgList
          | DropFrom Int
          | DataNothing
          | EndProgram
          deriving (Show, Read)
 
-data ArgList = ListNode String ArgList
-             | EndNode String
+data ArgList = ListNode IntExp ArgList
+             | EndNode IntExp
              deriving (Show, Read)
 
 data IntExp = Mul IntExp IntExp
