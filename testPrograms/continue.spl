@@ -1,0 +1,1 @@
+x = 1; while(true) {x++; if(x % 2 == 0) then {print(x)} else {continue;}};

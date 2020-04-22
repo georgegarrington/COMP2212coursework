@@ -46,11 +46,11 @@ import Tokens
     take    { TokenTake _ }
     drop    { TokenDrop _ }
     if      { TokenIf _ } 
-    then    { TokenThen _ }
     else    { TokenElse _ } 
     true    { TokenTrue _ }
     false   { TokenFalse _ }
     end     { TokenEnd _ }
+    nothing { TokenNothing _ }
     int     { TokenInt _ $$ } 
     string  { TokenString _ $$ }
 
@@ -60,12 +60,13 @@ import Tokens
 %left '+' '-'
 %left '*' '/' '%' '^'
 %left NEG
+%left BRAC
 %% 
 Exp : Exp ';' Exp {Seq $1 $3}
-     | Exp ';' {Single $1}
+     | Exp ';' {$1}
      | for '(' Exp ';' BExp ';' Exp ')' '{' Exp '}' {For $3 $5 $7 $10}
      | while '(' BExp ')' '{' Exp '}' {While $3 $6}
-     | if '(' BExp ')' then '{' Exp '}' else '{' Exp '}' {IfEl $3 $7 $11}
+     | if '(' BExp ')' '{' Exp '}' else '{' Exp '}' {IfEl $3 $6 $10}
      | string '++' {IncVar $1}
      | string '--' {DecVar $1}
      | string '=' streams '['int']' '.' take '('')' {TakeFrom $5 $1}
@@ -77,13 +78,14 @@ Exp : Exp ';' Exp {Seq $1 $3}
      | print '('string')' {PrintVar $3}
      | printAll '(' ArgList ')' {PrintAll $3}
      | streams '['int']' '.' drop '('')' {DropFrom $3}
+     | nothing {DataNothing}
      | end {EndProgram}
     
 ArgList : string ',' ArgList {ListNode $1 $3}
         | string {EndNode $1}
 
 --This will always evaluate to an int, it is an int "type"
-IntExp : '(' IntExp ')' {$2}
+IntExp : '(' IntExp ')' %prec BRAC {$2}
     | IntExp '*' IntExp {Mul $1 $3}
     | IntExp '/' IntExp {Div $1 $3}
     | IntExp '+' IntExp {Add $1 $3}
@@ -96,7 +98,7 @@ IntExp : '(' IntExp ')' {$2}
     | streams '['int']' '.' length '('')' {GetLength $3}
 
 --This will always evaluate to a boolean, it is a boolean "type"
-BExp : '(' BExp ')' {$2}
+BExp : '(' BExp ')' %prec BRAC {$2}
     | BExp '&&' BExp {And $1 $3}
     | BExp '||' BExp {Or $1 $3}
     | '!' BExp {Not $2}
@@ -132,6 +134,7 @@ data Exp = Seq Exp Exp
          | PrintVar String
          | PrintAll ArgList
          | DropFrom Int
+         | DataNothing
          | EndProgram
          deriving (Show, Read)
 

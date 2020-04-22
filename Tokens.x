@@ -4,13 +4,10 @@ module Tokens where
 
 %wrapper "posn" 
 $digit = 0-9     
--- digits 
 $alpha = [a-zA-Z]
---$newLine = [\n]
 
 tokens :-
   "--".*        ; 
-  --$newLine       {\p -> \s -> TokenNewLine p}
   $white+         ;
   while          {\p -> \s -> TokenWhile p} --new
   for            {\p -> \s -> TokenFor p } --new
@@ -24,6 +21,7 @@ tokens :-
   length         {\p -> \s -> TokenLength p}
   true           {\p -> \s -> TokenTrue p}
   false          {\p -> \s -> TokenFalse p}
+  nothing        {\p -> \s -> TokenNothing p}
   \(             {\p -> \s -> TokenLParen p}
   \)             {\p -> \s -> TokenRParen p}
   \[             {\p -> \s -> TokenLSquare p}  
@@ -52,13 +50,10 @@ tokens :-
   \>             {\p -> \s -> TokenGt p}
   \<             {\p -> \s -> TokenLt p}
   if             {\p -> \s -> TokenIf p}
-  then           {\p -> \s -> TokenThen p}
   else           {\p -> \s -> TokenElse p}
-  continue       {\p -> \s -> TokenContinue p}
   end            {\p -> \s -> TokenEnd p}
   $digit+        {\p -> \s -> TokenInt p (read s)}
   $alpha [$alpha $digit \_ \’]*   {\p -> \s -> TokenString p s}
-
 
 { 
 -- Each action has type :: AlexPosn -> String -> MDLToken 
@@ -79,6 +74,7 @@ data Token =
   TokenLength AlexPosn         |
   TokenTrue AlexPosn           |
   TokenFalse AlexPosn          |
+  TokenNothing AlexPosn        |
   TokenLParen AlexPosn         |
   TokenRParen AlexPosn         |
   TokenLSquare AlexPosn        |
@@ -108,9 +104,7 @@ data Token =
   TokenGt AlexPosn             |
   TokenLt AlexPosn             |  
   TokenIf AlexPosn             |
-  TokenThen AlexPosn           |
   TokenElse AlexPosn           |
-  TokenContinue AlexPosn       |
   TokenEnd AlexPosn            |
   TokenInt AlexPosn Int        |
   TokenString AlexPosn String  
@@ -118,7 +112,6 @@ data Token =
   deriving (Eq,Show) 
 
 tokenPosn :: Token -> String
---tokenPosn (TokenNewLine  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenWhile  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenFor  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenNotEmpty  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
@@ -131,6 +124,7 @@ tokenPosn (TokenPrintAll  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLength  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenTrue  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenFalse  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenNothing  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenRParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLSquare  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
@@ -159,9 +153,7 @@ tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenGt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenIf (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenThen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenElse (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenContinue (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenEnd (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenInt (AlexPn a l c) _) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenString (AlexPn a l c) _) = show(l) ++ ":" ++ show(c)

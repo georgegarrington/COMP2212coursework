@@ -1,7 +1,6 @@
-myinterpreter : Main.hs
-	ghc -o myinterpreter Main.hs
-
-Main.hs : Tokens.hs Grammar.hs
+myinterpreter : Main.hs Evaluator.hs IOReader.hs Tokens.hs Grammar.hs
+	ghc Main -o "myinterpreter"
+	rm -rf Tokens.hs Grammar.hs *.hi *.o *.info
 
 Tokens.hs : Tokens.x
 	~/.cabal/bin/alex Tokens.x

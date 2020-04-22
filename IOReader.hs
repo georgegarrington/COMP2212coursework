@@ -1,10 +1,9 @@
+module IOReader where
+
+import Control.Exception
 import System.IO
 import Control.Monad
-import Evaluator
-
---reader to return result nad to print it afterwards
-main = do result <- reader []
-          putStrLn ("The String is " ++ (show result) ++ "\n")
+import Text.Read
           
 --reads standard input return standard output
 -- takes the type that we want be the result and then we return IO in order main to read it
@@ -20,7 +19,17 @@ reader result = do eof <- isEOF
                               --map each element of b to become a list from ["1", "5"]  into [["1"], ["5"]]
                               --read convert the string into an int from ["1"] into [1]
                               let c = map (\x -> [read x :: Int]) b
-                              reader (addToResult result c)
+                              if(not $ checkIfAllDigits b) then error "Invalid values detected in stream input, only Ints are permitted!" else reader (addToResult result c)
+
+--Determines whether all strings in the list evaluate to digits or not
+checkIfAllDigits :: [String] -> Bool
+checkIfAllDigits [] = True
+checkIfAllDigits (x:xs)
+
+    | val == Nothing = False
+    | otherwise = checkIfAllDigits xs
+
+    where val = readMaybe x :: Maybe Int
 
 addToResult :: [[Int]] -> [[Int]] -> [[Int]]
 addToResult [] c = c
@@ -29,4 +38,4 @@ addToResult result [] = result
 --result [[1,2], [5,6]]
 --add to [1,2] 1 from c
 --           result  c
-addToResult (x:xs) (y:ys) = (x ++ y) : addToResult xs ys                          
+addToResult (x:xs) (y:ys) = (x ++ y) : addToResult xs ys                         
