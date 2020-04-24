@@ -66,10 +66,10 @@ Exp : for '(' ExpList ';' BExp ';' ExpList ')' '{' OuterExp '}' {For $3 $5 $7 $1
      | string '-''-' {DecVar $1}
      | string '=' streams '['int']' '.' take '('')' {TakeFrom $5 $1}
      | string '=' IntExp {SetVar $1 $3}
-     | string '*''=' IntExp {TimesEq $1 $3}
-     | string '/''=' IntExp {DivEq $1 $3}
-     | string '+''=' IntExp {AddEq $1 $3}
-     | string '-''=' IntExp {SubEq $1 $3} 
+     | string '*''=' IntExp {TimesEq $1 $4}
+     | string '/''=' IntExp {DivEq $1 $4}
+     | string '+''=' IntExp {AddEq $1 $4}
+     | string '-''=' IntExp {SubEq $1 $4} 
      | print '('IntExp')' {PrintVar $3}
      | printAll '(' ArgList ')' {PrintAll $3}
      | streams '['int']' '.' drop '('')' {DropFrom $3}
