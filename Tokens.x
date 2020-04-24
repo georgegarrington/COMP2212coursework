@@ -7,7 +7,7 @@ $digit = 0-9
 $alpha = [a-zA-Z]
 
 tokens :-
-  "--".*        ; 
+  "//".*        ; 
   $white+         ;
   while          {\p -> \s -> TokenWhile p} --new
   for            {\p -> \s -> TokenFor p } --new
@@ -33,12 +33,6 @@ tokens :-
   "&&"           {\p -> \s -> TokenAnd p}
   "||"           {\p -> \s -> TokenOr p} 
   \!             {\p -> \s -> TokenNot p}
-  "/="           {\p -> \s -> TokenDivEq p} 
-  "*="           {\p -> \s -> TokenTimesEq p} 
-  "-="           {\p -> \s -> TokenSubEq p} 
-  "+="           {\p -> \s -> TokenPlusEq p} 
-  "++"           {\p -> \s -> TokenInc p}
-  "--"           {\p -> \s -> TokenDec p}
   \^             {\p -> \s -> TokenExp p}
   \-             {\p -> \s -> TokenMinus p}
   \+             {\p -> \s -> TokenPlus p}
@@ -56,7 +50,6 @@ tokens :-
 
 { 
 
--- The token type: 
 data Token = 
 
   TokenWhile AlexPosn          |
@@ -84,12 +77,6 @@ data Token =
   TokenAnd AlexPosn            |
   TokenOr AlexPosn             |
   TokenNot AlexPosn            |
-  TokenDivEq AlexPosn          |
-  TokenTimesEq AlexPosn        | 
-  TokenSubEq  AlexPosn         | 
-  TokenPlusEq AlexPosn         |
-  TokenInc AlexPosn            |
-  TokenDec AlexPosn            |
   TokenExp AlexPosn            |
   TokenMinus AlexPosn          | 
   TokenPlus AlexPosn           |
@@ -132,12 +119,6 @@ tokenPosn (TokenSeq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenAnd (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenOr (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenNot  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenDivEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenTimesEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenSubEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenPlusEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenInc (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenDec (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenExp (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenMinus  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenPlus (AlexPn a l c)) = show(l) ++ ":" ++ show(c)

@@ -23,18 +23,12 @@ import Tokens
     '*'     { TokenTimes _ }
     '/'     { TokenDiv _ }
     '%'     { TokenMod _ }
-    '/='    { TokenDivEq _ }
-    '*='    { TokenTimesEq _ }
-    '-='    { TokenSubEq _ }
-    '+='    { TokenPlusEq _ }
     '^'     { TokenExp _ }
     '-'     { TokenMinus _ }
     '+'     { TokenPlus _ }
     '='     { TokenEq _ }
     '>'     { TokenGt _ }
     '<'     { TokenLt _ }
-    '++'    { TokenInc _ }
-    '--'    { TokenDec _ }
     length  { TokenLength _ }
     empty   { TokenEmpty _ }
     print   { TokenPrint _ }
@@ -68,14 +62,14 @@ OuterExp : Exp ';' OuterExp {Seq $1 $3}
 Exp : for '(' ExpList ';' BExp ';' ExpList ')' '{' OuterExp '}' {For $3 $5 $7 $10}
      | while '(' BExp ')' '{' OuterExp '}' {While $3 $6}
      | if '(' BExp ')' '{' OuterExp '}' else '{' OuterExp '}' {IfEl $3 $6 $10}
-     | string '++' {IncVar $1}
-     | string '--' {DecVar $1}
+     | string '+''+' {IncVar $1}
+     | string '-''-' {DecVar $1}
      | string '=' streams '['int']' '.' take '('')' {TakeFrom $5 $1}
      | string '=' IntExp {SetVar $1 $3}
-     | string '*=' IntExp {TimesEq $1 $3}
-     | string '/=' IntExp {DivEq $1 $3}
-     | string '+=' IntExp {AddEq $1 $3}
-     | string '-=' IntExp {SubEq $1 $3} 
+     | string '*''=' IntExp {TimesEq $1 $3}
+     | string '/''=' IntExp {DivEq $1 $3}
+     | string '+''=' IntExp {AddEq $1 $3}
+     | string '-''=' IntExp {SubEq $1 $3} 
      | print '('IntExp')' {PrintVar $3}
      | printAll '(' ArgList ')' {PrintAll $3}
      | streams '['int']' '.' drop '('')' {DropFrom $3}
@@ -140,10 +134,12 @@ data Exp = Seq Exp Exp
          | EndProgram
          deriving (Show, Read)
 
+--A list of expressions seperated by commas, used for increment and intialisation steps in a for loop
 data ExpList = ExpListNode Exp ExpList    
             | ExpEndNode Exp
             deriving (Show, Read)
 
+--A list of int expressions used by the printAll method
 data ArgList = ArgListNode IntExp ArgList
              | ArgEndNode IntExp
              deriving (Show, Read)
