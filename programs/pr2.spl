@@ -8,6 +8,6 @@ while(streams[0].notEmpty() && streams[1].notEmpty() && streams[2].notEmpty()){
 
     printAll(a, b, c, d, e);
 
-}; 
+};
 
 end;

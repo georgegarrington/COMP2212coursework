@@ -62,11 +62,13 @@ import Tokens
 %left NEG
 %left BRAC
 %% 
-Exp : Exp ';' Exp {Seq $1 $3}
-     | Exp ';' {$1}
-     | for '(' Exp ';' BExp ';' Exp ')' '{' Exp '}' {For $3 $5 $7 $10}
-     | while '(' BExp ')' '{' Exp '}' {While $3 $6}
-     | if '(' BExp ')' '{' Exp '}' else '{' Exp '}' {IfEl $3 $6 $10}
+
+OuterExp : Exp ';' OuterExp {Seq $1 $3}
+        | Exp ';' {$1}
+
+Exp : for '(' ExpList ';' BExp ';' ExpList ')' '{' OuterExp '}' {For $3 $5 $7 $10}
+     | while '(' BExp ')' '{' OuterExp '}' {While $3 $6}
+     | if '(' BExp ')' '{' OuterExp '}' else '{' OuterExp '}' {IfEl $3 $6 $10}
      | string '++' {IncVar $1}
      | string '--' {DecVar $1}
      | string '=' streams '['int']' '.' take '('')' {TakeFrom $5 $1}
@@ -81,8 +83,11 @@ Exp : Exp ';' Exp {Seq $1 $3}
      | nothing {DataNothing}
      | end {EndProgram}
     
-ArgList : IntExp ',' ArgList {ListNode $1 $3}
-        | IntExp {EndNode $1}
+ExpList : Exp ',' ExpList {ExpListNode $1 $3}
+    | Exp {ExpEndNode $1}
+
+ArgList : IntExp ',' ArgList {ArgListNode $1 $3}
+        | IntExp {ArgEndNode $1}
 
 --This will always evaluate to an int, it is an int "type"
 IntExp : '(' IntExp ')' %prec BRAC {$2}
@@ -119,7 +124,7 @@ parseError [] = error "Unknown Parse Error"
 parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 
 data Exp = Seq Exp Exp
-         | For Exp BExp Exp Exp
+         | For ExpList BExp ExpList Exp
          | While BExp Exp
          | IfEl BExp Exp Exp
          | IncVar String
@@ -137,8 +142,12 @@ data Exp = Seq Exp Exp
          | EndProgram
          deriving (Show, Read)
 
-data ArgList = ListNode IntExp ArgList
-             | EndNode IntExp
+data ExpList = ExpListNode Exp ExpList    
+            | ExpEndNode Exp
+            deriving (Show, Read)
+
+data ArgList = ArgListNode IntExp ArgList
+             | ArgEndNode IntExp
              deriving (Show, Read)
 
 data IntExp = Mul IntExp IntExp

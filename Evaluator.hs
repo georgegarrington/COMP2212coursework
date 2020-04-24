@@ -92,9 +92,27 @@ A for loop can simply be treated as a while loop with an initialisation step, an
 then on every iteration execute the expression contained in the loop followed
 by the incremental step expression
 -}
-evalExp s ((For init b incr e):es) = do 
+evalExp s ((For inits b incrs e):es) = do 
 
-    evalExp s (init:(While b (Seq e incr)):es)
+    {-
+    First do all the initialisation expressions, then do a while loop of the 
+    expression within the curly braces of the for loop followed by all the 
+    incremental step expressions
+    -}
+    evalExp s ((getExpList inits) ++ [While b (listToSeq ([e] ++ (getExpList incrs))){-(listToSeq e:(getExpList incrs))-}] ++ es)
+
+
+--Used with a for loop to get the list of expressions
+getExpList :: ExpList -> [Exp]
+getExpList (ExpEndNode e) = [e]
+getExpList (ExpListNode e list) = e:(getExpList list)
+
+
+--Turns a list of expressions into a seq data type with arbitrary many inner seqs
+listToSeq :: [Exp] -> Exp
+listToSeq [] = error "You cannot generate a seq from an empty list of expressions!"
+listToSeq [e] = e
+listToSeq (e:es) = Seq e (listToSeq es)
 
 
 --INPUT: an arg list data type which represents a list of variable names
@@ -102,8 +120,8 @@ evalExp s ((For init b incr e):es) = do
 getPrintExprList :: ArgList -> [Exp]
 
 --base case
-getPrintExprList (EndNode inX) = [PrintVar inX]
-getPrintExprList (ListNode inX list) = (PrintVar inX):(getPrintExprList list)
+getPrintExprList (ArgEndNode inX) = [PrintVar inX]
+getPrintExprList (ArgListNode inX list) = (PrintVar inX):(getPrintExprList list)
 
 
 --INPUT: state, boolean expression to evaluate
