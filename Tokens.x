@@ -55,12 +55,10 @@ tokens :-
   $alpha [$alpha $digit \_ \’]*   {\p -> \s -> TokenString p s}
 
 { 
--- Each action has type :: AlexPosn -> String -> MDLToken 
 
 -- The token type: 
 data Token = 
 
-  --TokenNewLine AlexPosn        | --Dont think this is needed
   TokenWhile AlexPosn          |
   TokenFor AlexPosn            |
   TokenEmpty AlexPosn          |
