@@ -1,4 +1,4 @@
-while(streams[0].notEmpty() && streams[1].notEmpty() && streams[2].notEmpty()){
+while(!streams[0].empty() && !streams[1].empty() && !streams[2].empty()){
 
     a = streams[2].take(); --C1
     b = streams[1].take(); --B1

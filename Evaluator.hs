@@ -18,20 +18,20 @@ evalExp :: State -> [Exp] -> IO ()
 --All sub expressions have been evaluated, first base case 
 evalExp s [] = return ()
     
---End marker detected, second base case
+--End marker detected, second base case; this is the proper way to end a program
 evalExp s (EndProgram:es) = return ()
 
 --Do nothing and skip to the next expression to evaluate
 evalExp s (DataNothing:es) = evalExp s es
 
---Increment the specified variable
+--Increment the variable in state s with the name var
 evalExp s ((IncVar var):es) = evalExp (setVar s var (DataInt(val + 1))) es
     
     where 
 
         val = getVar s var
 
---Decrement variable index i
+--Decrement the variable in state s with name var
 evalExp s ((DecVar var):es) = evalExp (setVar s var (DataInt(val - 1))) es
 
     where
@@ -48,7 +48,7 @@ evalExp s ((TakeFrom i var):es) = evalExp (setVar (dropFrom s i) var (DataInt va
         
         val = peekFrom s i 
 
---Set index named variable in state s to value of x
+--Set the variable with name var in state s to value of x
 evalExp s ((SetVar var x):es) = evalExp (setVar s var (DataInt val)) es
 
     where 
@@ -71,12 +71,13 @@ evalExp s ((SubEq var x):es) = evalExp (setVar s var (DataInt ((getVar s var) - 
 
     where val = evalInt s x
 
---Print variable index 
+--Print the given int expression 
 evalExp s ((PrintVar inX):es) = do 
 
     print $ evalInt s inX
     evalExp s es
 
+--Print all of the int expressions in the list type args
 evalExp s ((PrintAll args):es) = evalExp s ((getPrintExprList args) ++ es)
 
 --Drop the head from stream i
@@ -88,9 +89,9 @@ evalExp s ((IfEl b e1 e2):es) = if(evalBool s b) then evalExp s (e1:es) else eva
 evalExp s ((While b e):es) = if(evalBool s b) then (evalExp s (e:(While b e):es)) else evalExp s es
     
 {-
-A for loop can simply be treated as a while loop with an initialisation step, and 
+A for loop can simply be treated as a while loop with multiple initialisation steps, and 
 then on every iteration execute the expression contained in the loop followed
-by the incremental step expression
+by arbitrarily many incremental step expressions
 -}
 evalExp s ((For inits b incrs e):es) = do 
 
@@ -99,7 +100,7 @@ evalExp s ((For inits b incrs e):es) = do
     expression within the curly braces of the for loop followed by all the 
     incremental step expressions
     -}
-    evalExp s ((getExpList inits) ++ [While b (listToSeq ([e] ++ (getExpList incrs))){-(listToSeq e:(getExpList incrs))-}] ++ es)
+    evalExp s ((getExpList inits) ++ [While b (listToSeq ([e] ++ (getExpList incrs)))] ++ es)
 
 
 --Used with a for loop to get the list of expressions
@@ -140,7 +141,6 @@ evalBool s (LThanEQ ix1 ix2) = (evalInt s ix1) <= (evalInt s ix2)
 evalBool s (Equal ix1 ix2) = (evalInt s ix1) == (evalInt s ix2)
 evalBool s (NEqual ix1 ix2) = (evalInt s ix1) /= (evalInt s ix2)
 evalBool s (StreamEmpty i) = isEmpty s i
-evalBool s (StreamNotEmpty i) = notEmpty s i
 
 
 --INPUT: state, int expression to evaluate
@@ -227,9 +227,3 @@ isEmpty (_, (xs:xss)) 0
     | xs == [] = True
     | otherwise = False
 isEmpty (_, (xs:xss)) i = isEmpty ([], xss) (i - 1)
-
-
---INPUT: state, which stream is being queried
---OUTPUT: whether or not requested stream is not empty
-notEmpty :: State -> Int -> Bool
-notEmpty s i = not $ isEmpty s i

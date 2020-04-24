@@ -37,7 +37,6 @@ import Tokens
     '--'    { TokenDec _ }
     length  { TokenLength _ }
     empty   { TokenEmpty _ }
-    notEmpty { TokenNotEmpty _ }
     print   { TokenPrint _ }
     printAll { TokenPrintAll _ }
     streams { TokenStreams _ }
@@ -115,7 +114,6 @@ BExp : '(' BExp ')' %prec BRAC {$2}
     | IntExp '<''=' IntExp {LThanEQ $1 $4}
     | IntExp '=''=' IntExp {Equal $1 $4}
     | IntExp '!''=' IntExp {NEqual $1 $4}
-    | streams '['int']''.' notEmpty '('')' {StreamNotEmpty $3}
     | streams '['int']''.' empty '('')' {StreamEmpty $3}
 
 { 
@@ -173,7 +171,6 @@ data BExp = And BExp BExp
          | Equal IntExp IntExp
          | NEqual IntExp IntExp
          | StreamEmpty Int
-         | StreamNotEmpty Int
           deriving (Show, Read)
 
 } 

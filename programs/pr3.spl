@@ -1,6 +1,6 @@
 print(0);
 
-while(streams[0].notEmpty() && streams[1].notEmpty()){
+while(!streams[0].empty() && !streams[1].empty()){
 
     streams[1].drop();
     var = streams[1].take();

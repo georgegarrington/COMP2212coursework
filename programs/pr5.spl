@@ -1,6 +1,6 @@
 sum = 0;
 
-while(streams[0].notEmpty()){
+while(!streams[0].empty()){
 
     streamVal = streams[0].take();
     sum += streamVal;
