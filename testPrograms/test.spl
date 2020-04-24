@@ -1,0 +1,9 @@
+varSize = 1;
+
+for(vars[0] = 0; vars[0] < 10; vars[0]++){
+
+	vars[0].print();
+
+};
+
+end;

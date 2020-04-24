@@ -1,0 +1,14 @@
+print(0);
+
+while(!streams[0].empty() && !streams[1].empty()){
+
+    streams[1].drop();
+    var = streams[1].take();
+    print(var);    
+
+    var = streams[0].take();
+    print(var);
+
+};
+
+end;

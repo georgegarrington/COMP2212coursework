@@ -1,0 +1,12 @@
+while(streams[0].length() >= 3){
+
+    c = streams[0].take();
+    c = 3 * c - 1;
+    b = streams[0].take();
+    b *= 2; 
+    a = streams[0].take();
+    printAll(a, b, c);
+
+};
+
+end;
