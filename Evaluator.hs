@@ -11,7 +11,7 @@ type State =  ([Var],[[Int]])
 type Var = (String,Int)
 
 
---INPUT: the current state of evaluation, the list of sub expressions left to evalExp
+--INPUT: the current state of evaluation, the list of sub expressions left to evaluate
 --OUTPUT: none, the method only prints to standard output
 evalExp :: State -> [Exp] -> IO ()
 
@@ -31,7 +31,7 @@ evalExp s ((IncVar var):es) = evalExp (setVar s var (DataInt(val + 1))) es
 
         val = getVar s var
 
---Decrement the variable in state s with name var
+--Decrement the variable in state s with the name var
 evalExp s ((DecVar var):es) = evalExp (setVar s var (DataInt(val - 1))) es
 
     where
@@ -77,7 +77,7 @@ evalExp s ((PrintVar inX):es) = do
     print $ evalInt s inX
     evalExp s es
 
---Print all of the int expressions in the list type args
+--Print all of the int expressions in the arglist args
 evalExp s ((PrintAll args):es) = evalExp s ((getPrintExprList args) ++ es)
 
 --Drop the head from stream i
