@@ -34,8 +34,4 @@ checkIfAllDigits (x:xs)
 addToResult :: [[Int]] -> [[Int]] -> [[Int]]
 addToResult [] c = c
 addToResult result [] = result
---c [[1], [5]]
---result [[1,2], [5,6]]
---add to [1,2] 1 from c
---           result  c
 addToResult (x:xs) (y:ys) = (x ++ y) : addToResult xs ys                         
