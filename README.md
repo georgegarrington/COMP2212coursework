@@ -1,4 +1,4 @@
-# How to use 
+# Compiling
 
 1. cd into the directory and run "make"
 2. An executable will appear called myinterpreter
