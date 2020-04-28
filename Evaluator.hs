@@ -47,52 +47,52 @@ evalExp s ((SetVar var x):es) = evalExp (setVar state var val) es
     where 
 
         tup = evalInt s x
-        val = fst $ tup
-        state = snd $ tup
+        val = fst tup
+        state = snd tup
 
 evalExp s ((TimesEq var x):es) = evalExp (setVar state var ((getVar state var) * val)) es
 
     where 
 
         tup = evalInt s x
-        val = fst $ tup
-        state = snd $ tup
+        val = fst tup
+        state = snd tup
 
 evalExp s ((DivEq var x):es) = evalExp (setVar state var ((getVar state var) `div` val)) es
 
     where 
 
         tup = evalInt s x
-        val = fst $ tup
-        state = snd $ tup
+        val = fst tup
+        state = snd tup
 
 evalExp s ((AddEq var x):es) = evalExp (setVar state var ((getVar state var) + val)) es
 
     where
 
         tup = evalInt s x
-        val = fst $ tup
-        state = snd $ tup
+        val = fst tup
+        state = snd tup
 
 evalExp s ((SubEq var x):es) = evalExp (setVar state var ((getVar state var) - val)) es
 
     where 
 
         tup = evalInt s x
-        val = fst $ tup
-        state = snd $ tup
+        val = fst tup
+        state = snd tup
 
 --Print the given int expression 
 evalExp s ((PrintVar inX):es) = do 
 
-    print $ val
+    print val
     evalExp state es
 
     where
 
         tup = evalInt s inX
-        val = fst $ tup
-        state = snd $ tup
+        val = fst tup
+        state = snd tup
 
 --Print all of the int expressions in the arglist args
 evalExp s ((PrintAll args):es) = evalExp s ((getPrintExprList args) ++ es)
@@ -214,11 +214,6 @@ evalInt s (Expo e1 e2) = ((fst $ evalInt s e1) ^ (fst $ evalInt sLHS e2), sRHS)
         sRHS = snd $ evalInt sLHS e2
 
 evalInt s (Neg e) = ((-1) * (fst $ evalInt s e), snd $ evalInt s e)
-
-
-{-
-binaryEval :: (a -> a -> a) -> State -> (Int, State)
-binaryEval f s -}
 
 
 --INPUT: state, which stream is being queried

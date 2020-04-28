@@ -22,7 +22,9 @@ main = do
 {-
 Mutually recursive methods to remove all multiline comment tokens and the tokens between them. Could not 
 manage to get alex to correctly tokenize "/*" or "*/" so instead pattern match using each 
-characters' individual tokens which are also the tokens for multiplication and division
+characters' individual tokens which are also the tokens for multiplication and division. This is the only possible
+legal usage of "/" followed immediately by "*" and vice versa so this is a valid solution and we know this pattern
+will definately always hold for multiline comments
 -}
 removeMultiLines :: [Token] -> [Token]
 removeMultiLines [] = []
