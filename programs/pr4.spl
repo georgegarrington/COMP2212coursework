@@ -1,4 +1,11 @@
-while(streams[0].length() >= 3){
+//This is how you write a single line comment
+
+/*
+this is how you write a 
+multiline comment
+*/
+
+/while(streams[0].length() >= 3){
 
     c = streams[0].take();
 
