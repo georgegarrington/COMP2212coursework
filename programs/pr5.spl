@@ -44,7 +44,8 @@ for(sum = 0; !streams[0].empty(); sum += streams[0].take(), print(sum)){
     to ignore this expression and go on to evaluate the next expression in the list of sub expressions (parse tree).
     We felt it necessary to add this to the language as within the grammar the for loop is expecting some 
     kind of expression within its curly braces, and it will prove useful in certain situations eg perhaps
-    you may only have 1 incremental step to perform
+    you may only have 1 incremental step to perform and no other expressions so you may want to do everything 
+    using the syntactic sugar of a for loop as opposed to a while loop as we have done here
     */
     nothing();
 
