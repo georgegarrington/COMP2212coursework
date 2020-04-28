@@ -15,5 +15,27 @@ main = do
     if(length streams == 0) then error "Please make sure you have provided stream data!" else do
    
     state <- return ([],streams)
-    rootExp <- return (parse $ (alexScanTokens string))
+    tokens <- return $ removeMultiLines $ alexScanTokens string
+    rootExp <- return $ parse $ tokens
     evalExp state [rootExp]                
+
+{-
+Mutually recursive methods to remove all multiline comment tokens and the tokens between them. Could not 
+manage to get alex to correctly tokenize "/*" or "*/" so instead pattern match using each 
+characters' individual tokens which are also the tokens for multiplication and division. This is the only possible
+legal usage of "/" followed immediately by "*" and vice versa so this is a valid solution and we know this pattern
+will definately always hold for multiline comments
+-}
+removeMultiLines :: [Token] -> [Token]
+removeMultiLines [] = []
+
+-- "/*" start of a multiline comment looks like this
+removeMultiLines ((TokenDiv _):(TokenTimes _):toks) = dropCommentBody toks
+removeMultiLines (t:toks) = t:(removeMultiLines toks)
+
+dropCommentBody :: [Token] -> [Token]
+dropCommentBody [] = error "Multiline comment was declared without an end!"
+
+-- "*/" end of a multiline comment looks like this
+dropCommentBody ((TokenTimes _):(TokenDiv _):toks) = removeMultiLines toks
+dropCommentBody (t:toks) = dropCommentBody toks

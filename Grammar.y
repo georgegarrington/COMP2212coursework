@@ -55,26 +55,24 @@ import Tokens
 %left NEG
 %left BRAC
 %% 
-
 OuterExp : Exp ';' OuterExp {Seq $1 $3}
         | Exp ';' {$1}
 
-Exp : for '(' ExpList ';' BExp ';' ExpList ')' '{' OuterExp '}' {For $3 $5 $7 $10}
-     | while '(' BExp ')' '{' OuterExp '}' {While $3 $6}
-     | if '(' BExp ')' '{' OuterExp '}' else '{' OuterExp '}' {IfEl $3 $6 $10}
+Exp : for '(' ExpList ';' BExp ';' ExpList ')' '{'OuterExp'}' {For $3 $5 $7 $10}
+     | while '('BExp')' '{'OuterExp'}' {While $3 $6}
+     | if'('BExp')' '{'OuterExp'}' else '{'OuterExp'}' {IfEl $3 $6 $10}
      | string '+''+' {IncVar $1}
      | string '-''-' {DecVar $1}
-     | string '=' streams '['int']' '.' take '('')' {TakeFrom $5 $1}
      | string '=' IntExp {SetVar $1 $3}
      | string '*''=' IntExp {TimesEq $1 $4}
      | string '/''=' IntExp {DivEq $1 $4}
      | string '+''=' IntExp {AddEq $1 $4}
      | string '-''=' IntExp {SubEq $1 $4} 
-     | print '('IntExp')' {PrintVar $3}
-     | printAll '(' ArgList ')' {PrintAll $3}
-     | streams '['int']' '.' drop '('')' {DropFrom $3}
-     | nothing {DataNothing}
-     | end {EndProgram}
+     | print'('IntExp')' {PrintVar $3}
+     | printAll'('ArgList')' {PrintAll $3}
+     | streams'['int']''.'drop'('')' {DropFrom $3}
+     | nothing'('')' {DataNothing}
+     | end'('')' {EndProgram}
     
 ExpList : Exp ',' ExpList {ExpListNode $1 $3}
     | Exp {ExpEndNode $1}
@@ -93,6 +91,7 @@ IntExp : '(' IntExp ')' %prec BRAC {$2}
     | '-' IntExp %prec NEG {Neg $2}
     | int {DataInt $1}
     | string {GetVar $1}
+    | streams '['int']' '.' take '('')' {TakeFrom $3}
     | streams '['int']' '.' length '('')' {GetLength $3}
 
 --This will always evaluate to a boolean, it is a boolean "type"
@@ -121,7 +120,6 @@ data Exp = Seq Exp Exp
          | IfEl BExp Exp Exp
          | IncVar String
          | DecVar String
-         | TakeFrom Int String
          | SetVar String IntExp
          | TimesEq String IntExp
          | DivEq String IntExp
@@ -153,6 +151,7 @@ data IntExp = Mul IntExp IntExp
          | Neg IntExp
          | DataInt Int
          | GetVar String
+         | TakeFrom Int
          | GetLength Int
             deriving (Show, Read)
 

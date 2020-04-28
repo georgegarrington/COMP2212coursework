@@ -1,14 +1,35 @@
+//The output sequence for this exercise must begin with 0
 print(0);
 
+/*
+Our language has a light hidden type system e.g. while(BExp){Exp}; a BExp which is something
+that always evaluates to a boolean must be placed in the parentheses, also in if/else expressions
+
+string = IntExp is the other type; whenever we set the value of a variable, it must evaluate to an
+int e.g. in this instance streams[n].take() evaluates to an int which is discussed in further detail
+below
+*/
 while(!streams[0].empty() && !streams[1].empty()){
 
+    //Skip every other element in the second stream
     streams[1].drop();
-    var = streams[1].take();
-    print(var);    
 
-    var = streams[0].take();
-    print(var);
+    /*
+    print takes an argument of int expression which is anything that evaluates to an int
+    so for instance a string is also an int expression (provided that string is the same string
+    which is the name of a variable that has been declared e.g. a = 1; print(a);) as it is telling 
+    the interpreter to look up the value of the variable with that string as its name and 
+    return its int value
+
+    streams[n].take() removes the head from stream n and returns its value, so it is an int
+    expression but it also has a "side effect" so we took inspiration from the IO ideology in 
+    Haskell and had the evalInt function return a tuple of the evaluated int and the (possibly)
+    changed state which is passed to the next call of the evaluator and will take into account
+    the possibly changed state ie the head from a stream may have been removed
+    */
+    print(streams[1].take());  
+    print(streams[0].take());
 
 };
 
-end;
+end();
