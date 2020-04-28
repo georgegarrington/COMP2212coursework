@@ -14,7 +14,7 @@ drops the head but it returns the value of the removed head too
 
 It is important to note that streams[n].take() is an int expression so it cannot be used as a standalone 
 expression by itself, it must be used somewhere where an int expression is expected eg below you can see
-two examples; string = IntExp, and printAll(IntExp, IntExp, IntExp ...)
+two examples; string = IntExp (setting a variable), and printAll(IntExp, IntExp, IntExp ...)
 */
 while(!streams[0].empty() && !streams[1].empty()){
 
