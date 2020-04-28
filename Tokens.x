@@ -7,15 +7,16 @@ $digit = 0-9
 $alpha = [a-zA-Z]
 
 tokens :-
-  "//".*        ; 
+
   $white+         ;
-  while          {\p -> \s -> TokenWhile p} --new
-  for            {\p -> \s -> TokenFor p } --new
+  "//".*          ; 
+  while          {\p -> \s -> TokenWhile p}
+  for            {\p -> \s -> TokenFor p }
   empty          {\p -> \s -> TokenEmpty p}
-  streams        {\p -> \s -> TokenStreams p} --new
-  take           {\p -> \s -> TokenTake p} --new
-  drop           {\p -> \s -> TokenDrop p} --new
-  print          {\p -> \s -> TokenPrint p} --new
+  streams        {\p -> \s -> TokenStreams p} 
+  take           {\p -> \s -> TokenTake p} 
+  drop           {\p -> \s -> TokenDrop p} 
+  print          {\p -> \s -> TokenPrint p} 
   printAll       {\p -> \s -> TokenPrintAll p}
   length         {\p -> \s -> TokenLength p}
   true           {\p -> \s -> TokenTrue p}
@@ -42,6 +43,7 @@ tokens :-
   \=             {\p -> \s -> TokenEq p}
   \>             {\p -> \s -> TokenGt p}
   \<             {\p -> \s -> TokenLt p}
+  \"             {\p -> \s -> TokenQuote p}
   if             {\p -> \s -> TokenIf p}
   else           {\p -> \s -> TokenElse p}
   end            {\p -> \s -> TokenEnd p}
@@ -86,6 +88,7 @@ data Token =
   TokenEq AlexPosn             | 
   TokenGt AlexPosn             |
   TokenLt AlexPosn             |  
+  TokenQuote AlexPosn          | --Not within our grammar, purely added so could use quotes in comments :)
   TokenIf AlexPosn             |
   TokenElse AlexPosn           |
   TokenEnd AlexPosn            |
@@ -128,6 +131,7 @@ tokenPosn (TokenMod (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenGt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenQuote (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenIf (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenElse (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenEnd (AlexPn a l c)) = show(l) ++ ":" ++ show(c)

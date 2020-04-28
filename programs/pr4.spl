@@ -1,12 +1,28 @@
 while(streams[0].length() >= 3){
 
     c = streams[0].take();
+
+    /*
+
+    one other possible way of doing the below could be;
+
+    c *= 3;
+    c--;
+
+    */
+
     c = 3 * c - 1;
     b = streams[0].take();
+
+    /*
+    As in java and haskell we have added the *=, /=, +=, -= operators for syntactic sugar.
+    We have also added the usual ++, and -- as handy keyword "methods" for increment and decrement
+    */
+
     b *= 2; 
     a = streams[0].take();
     printAll(a, b, c);
 
 };
 
-end;
+end();

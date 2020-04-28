@@ -25,14 +25,14 @@ evalExp s (EndProgram:es) = return ()
 evalExp s (DataNothing:es) = evalExp s es
 
 --Increment the variable in state s with the name var
-evalExp s ((IncVar var):es) = evalExp (setVar s var (DataInt(val + 1))) es
+evalExp s ((IncVar var):es) = evalExp (setVar s var (val + 1)) es
     
     where 
 
         val = getVar s var
 
 --Decrement the variable in state s with the name var
-evalExp s ((DecVar var):es) = evalExp (setVar s var (DataInt(val - 1))) es
+evalExp s ((DecVar var):es) = evalExp (setVar s var (val - 1)) es
 
     where
 
@@ -41,41 +41,58 @@ evalExp s ((DecVar var):es) = evalExp (setVar s var (DataInt(val - 1))) es
 --Evaluate e1 then evaluate e2
 evalExp s ((Seq e1 e2):es) = evalExp s (e1:e2:es)    
     
---Set the value of the named variable to the head of stream i, and remove it from the stream
-evalExp s ((TakeFrom i var):es) = evalExp (setVar (dropFrom s i) var (DataInt val)) es
-
-    where
-        
-        val = peekFrom s i 
-
 --Set the variable with name var in state s to value of x
-evalExp s ((SetVar var x):es) = evalExp (setVar s var (DataInt val)) es
+evalExp s ((SetVar var x):es) = evalExp (setVar state var val) es
 
     where 
 
-        val = evalInt s x
+        tup = evalInt s x
+        val = fst $ tup
+        state = snd $ tup
 
-evalExp s ((TimesEq var x):es) = evalExp (setVar s var (DataInt ((getVar s var) * val))) es
+evalExp s ((TimesEq var x):es) = evalExp (setVar state var ((getVar state var) * val)) es
 
-    where val = evalInt s x
+    where 
 
-evalExp s ((DivEq var x):es) = evalExp (setVar s var (DataInt ((getVar s var) `div` val))) es
+        tup = evalInt s x
+        val = fst $ tup
+        state = snd $ tup
 
-    where val = evalInt s x
+evalExp s ((DivEq var x):es) = evalExp (setVar state var ((getVar state var) `div` val)) es
 
-evalExp s ((AddEq var x):es) = evalExp (setVar s var (DataInt ((getVar s var) + val))) es
+    where 
 
-    where val = evalInt s x
+        tup = evalInt s x
+        val = fst $ tup
+        state = snd $ tup
 
-evalExp s ((SubEq var x):es) = evalExp (setVar s var (DataInt ((getVar s var) - val))) es
+evalExp s ((AddEq var x):es) = evalExp (setVar state var ((getVar state var) + val)) es
 
-    where val = evalInt s x
+    where
+
+        tup = evalInt s x
+        val = fst $ tup
+        state = snd $ tup
+
+evalExp s ((SubEq var x):es) = evalExp (setVar state var ((getVar state var) - val)) es
+
+    where 
+
+        tup = evalInt s x
+        val = fst $ tup
+        state = snd $ tup
 
 --Print the given int expression 
 evalExp s ((PrintVar inX):es) = do 
 
-    print $ evalInt s inX
-    evalExp s es
+    print $ val
+    evalExp state es
+
+    where
+
+        tup = evalInt s inX
+        val = fst $ tup
+        state = snd $ tup
 
 --Print all of the int expressions in the arglist args
 evalExp s ((PrintAll args):es) = evalExp s ((getPrintExprList args) ++ es)
@@ -144,20 +161,64 @@ evalBool s (StreamEmpty i) = isEmpty s i
 
 
 --INPUT: state, int expression to evaluate
---OUTPUT: evaluated int
-evalInt :: State -> IntExp -> Int
+--OUTPUT: evaluated int and the resulting (possible) changed state with streams altered
+evalInt :: State -> IntExp -> (Int, State)
 
---The base case 
-evalInt s (DataInt x) = x
-evalInt s (Mul e1 e2) = (evalInt s e1) * (evalInt s e2)
-evalInt s (Div e1 e2) = (evalInt s e1) `div` (evalInt s e2)
-evalInt s (Add e1 e2) = (evalInt s e1) + (evalInt s e2)
-evalInt s (Sub e1 e2) = (evalInt s e1) - (evalInt s e2)
-evalInt s (Mod e1 e2) = (evalInt s e1) `mod` (evalInt s e2)
-evalInt s (Expo e1 e2) = (evalInt s e1) ^ (evalInt s e2)
-evalInt s (Neg e) = (-1) * (evalInt s e)
-evalInt s (GetVar str) = getVar s str
-evalInt s (GetLength i) = getStreamLength s i
+--Base cases
+evalInt s (DataInt x) = (x,s)
+evalInt s (TakeFrom i) = (peekFrom s i, dropFrom s i)
+evalInt s (GetVar str) = (getVar s str, s)
+evalInt s (GetLength i) = (getStreamLength s i, s)
+
+evalInt s (Mul e1 e2) = ((fst $ evalInt s e1) * (fst $ evalInt sLHS e2), sRHS)
+
+    where
+
+        sLHS = snd $ evalInt s e1
+        sRHS = snd $ evalInt sLHS e2
+
+evalInt s (Div e1 e2) = ((fst $ evalInt s e1) `div` (fst $ evalInt sLHS e2), sRHS)
+
+    where
+
+        sLHS = snd $ evalInt s e1
+        sRHS = snd $ evalInt sLHS e2
+
+evalInt s (Add e1 e2) = ((fst $ evalInt s e1) + (fst $ evalInt sLHS e2), sRHS)
+
+    where
+
+        sLHS = snd $ evalInt s e1
+        sRHS = snd $ evalInt sLHS e2
+
+evalInt s (Sub e1 e2) = ((fst $ evalInt s e1) - (fst $ evalInt sLHS e2), sRHS)
+
+    where
+
+        sLHS = snd $ evalInt s e1
+        sRHS = snd $ evalInt sLHS e2
+
+evalInt s (Mod e1 e2) = ((fst $ evalInt s e1) `mod` (fst $ evalInt sLHS e2), sRHS)
+
+    where
+
+        sLHS = snd $ evalInt s e1
+        sRHS = snd $ evalInt sLHS e2
+
+
+evalInt s (Expo e1 e2) = ((fst $ evalInt s e1) ^ (fst $ evalInt sLHS e2), sRHS)
+
+    where
+
+        sLHS = snd $ evalInt s e1
+        sRHS = snd $ evalInt sLHS e2
+
+evalInt s (Neg e) = ((-1) * (fst $ evalInt s e), snd $ evalInt s e)
+
+
+{-
+binaryEval :: (a -> a -> a) -> State -> (Int, State)
+binaryEval f s -}
 
 
 --INPUT: state, which stream is being queried
@@ -207,16 +268,16 @@ getVar (((str1,x):xs),_) str2
 
 --INPUT: state, variable name to change or add, value of the variable
 --OUTPUT: resulting state
-setVar :: State -> String -> IntExp -> State
-setVar s var inX = setVarAux s var inX []
+setVar :: State -> String -> Int -> State
+setVar s var x = setVarAux s var x []
 
 --Helper method using an accumulator
-setVarAux :: State -> String -> IntExp -> [Var] -> State
-setVarAux ([],streams) var inX acc = (((var,(evalInt ([],streams) inX)):acc),streams)
-setVarAux ((str,val):vars,streams) var inX acc 
+setVarAux :: State -> String -> Int -> [Var] -> State
+setVarAux ([],streams) var x acc = (((var,x):acc),streams)
+setVarAux ((str,val):vars,streams) var x acc 
 
-    | str == var = (acc ++ [(str,(evalInt (acc ++ [(str,val)] ++ vars,streams) inX))] ++ vars, streams)
-    | otherwise = setVarAux (vars,streams) var inX ((str,val):acc)
+    | str == var = (acc ++ [(str,x)] ++ vars, streams)
+    | otherwise = setVarAux (vars,streams) var x ((str,val):acc)
 
 
 --INPUT: state, which stream is being queried
