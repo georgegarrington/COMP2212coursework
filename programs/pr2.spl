@@ -1,3 +1,17 @@
+while(!streams[0].empty && !streams[1].empty && !streams[2].empty){
+
+    a = streams[2].take;
+    b = streams[1].take;
+    c = streams[0].take;
+    d = b + c;
+    e = a + b;
+
+    print(a, b, c, d, e);
+
+};
+
+end;
+
 /*
 All the usual expected boolean operators have been implemented
 
@@ -8,7 +22,7 @@ cons another while loop data type of the same form to the list of sub expression
 into the next evaluation method call along with the new updated state and check the same
 boolean condition again but this time according to the new updated state so the boolean
 condition may no longer hold
-*/
+
 while(!streams[0].empty() && !streams[1].empty() && !streams[2].empty()){
 
     a = streams[2].take(); //C1
@@ -17,15 +31,16 @@ while(!streams[0].empty() && !streams[1].empty() && !streams[2].empty()){
     d = b + c; //B1 + A1
     e = a + b; //B1 + C1 
 
-    //This keyword (method) is syntactic sugar for calling print(a), print(b)... etc.
+    This keyword (method) is syntactic sugar for calling print(a), print(b)... etc.
+    
     printAll(a, b, c, d, e);
 
-/*
+
 Unlike in Java, (apart from initialisation and increment expressions in for loops), EVERY
 expression in our language is recognised as being seperated by ";", even at the end of curly 
 brace expressions like loops and if/else statements
-*/
+
 
 };
 
-end();
+end();*/

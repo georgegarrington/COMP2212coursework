@@ -1,4 +1,32 @@
 /*
+It may not be the most clear or practical way (or for any
+problems in this submission really) to use a for loop for our 
+solution however we have included it here in one question
+to show it does indeed function and we hope it will prove useful
+for the problems in the next submission. We have included a more 
+clear solution using a while loop in the commented section below
+*/
+
+for(sum = 0; !streams[0].empty; sum += streams[0].take, print(sum)){
+
+    nothing;
+
+};
+
+/*
+
+//Here is our original more clear solution using a while loop
+sum = 0;
+
+while(!streams[0].empty){
+
+    sum += streams[0].take;
+    print $ sum;
+
+};
+
+end;
+
 
 Here is our original solution to this problem using a while loop, it
 is most likely alot more clear and straightforward; we did not see the 
@@ -19,9 +47,7 @@ while(!streams[0].empty()){
 
 };
 
-*/
 
-/*
 Behaves in the same manor as for loops in most languages; there are arbitrarily many initialisation
 expressions eg could have x = 1, y = 2, followed by a condition on which the loop repeats to 
 the next iteration and finally arbitrarily many incremental step expressions eg could have x++, y *= 3
@@ -36,19 +62,19 @@ where the data type Seq Exp Exp denotes "Exp ; Exp" in the grammar. So in layman
 perform the expression in the curly braces followed by all the incremental step expressions and then proceed to check
 if the loop condition still holds after altering the state according to the expressions in this iteration and if so
 proceed to the next iteration of the loop and if not then move onto the next expression after the loop
-*/
+
 for(sum = 0; !streams[0].empty(); sum += streams[0].take(), print(sum)){
 
-    /*
+    
     The nothing keyword "method" does exactly that - nothing! It simply signals to the interpreter
     to ignore this expression and go on to evaluate the next expression in the list of sub expressions (parse tree).
     We felt it necessary to add this to the language as within the grammar the for loop is expecting some 
     kind of expression within its curly braces, and it will prove useful in certain situations eg perhaps
     you may only have 1 incremental step to perform and no other expressions so you may want to do everything 
     using the syntactic sugar of a for loop as opposed to a while loop as we have done here
-    */
+    
     nothing();
 
 };
 
-end();
+end();*/

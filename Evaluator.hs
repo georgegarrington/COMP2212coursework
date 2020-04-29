@@ -241,7 +241,7 @@ dropFrom :: State -> Int -> State
 dropFrom s i = dropFromAux s i []
 
 dropFromAux :: State -> Int -> [[Int]] -> State
-dropFromAux (_, xss) i _ | i < 0 || i >= (length xss) = error "Stream does not exist!"
+dropFromAux (_, xss) i _ | i < 0 || i >= (length xss) = error "Requested stream does not exist!"
 dropFromAux (_, []) _ _ = error "No element found in requested stream!"
 dropFromAux (ys, (xs:xss)) 0 acc 
 
