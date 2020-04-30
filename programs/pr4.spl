@@ -1,7 +1,6 @@
 while(streams[0].length >= 3){
 
-    trd = 3 * streams[0].take; 
-    trd--;
+    trd = 3 * streams[0].take - 1; 
     snd = 2 * streams[0].take;
 
     print(streams[0].take, snd, trd);
