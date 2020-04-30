@@ -6,11 +6,9 @@ while(streams[0].length >= 3){
 
     print(streams[0].take, snd, trd);
 
-}
+};
 
 end;
-
-
 
 /*
 while(streams[0].length() >= 3){
