@@ -125,7 +125,6 @@ data Exp = Seq Exp Exp
          | DivEq String IntExp
          | AddEq String IntExp
          | SubEq String IntExp
-         | PrintVar IntExp
          | PrintAll ArgList
          | DropFrom Int
          | DataNothing

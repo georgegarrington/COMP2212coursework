@@ -82,20 +82,23 @@ evalExp s ((SubEq var x):es) = evalExp (setVar state var ((getVar state var) - v
         val = fst tup
         state = snd tup
 
+
 --Print the given int expression 
+{-
 evalExp s ((PrintVar inX):es) = do 
 
     print val
     evalExp state es
 
-    where
+where
 
-        tup = evalInt s inX
-        val = fst tup
-        state = snd tup
+    tup = evalInt s inX
+    val = fst tup
+    state = snd tup-}
 
---Print all of the int expressions in the arglist args
-evalExp s ((PrintAll args):es) = evalExp s ((getPrintExprList args) ++ es)
+{-Print all of the int expressions in the arglist args, printList will call the evalExp 
+on the rest of the expressions when it has finished printing out and evaluting the arguments-}
+evalExp s ((PrintAll args):es) = printList s es args
 
 --Drop the head from stream i
 evalExp s ((DropFrom i):es) = evalExp (dropFrom s i) es    
@@ -120,6 +123,30 @@ evalExp s ((For inits b incrs e):es) = do
     evalExp s ((getExpList inits) ++ [While b (listToSeq ([e] ++ (getExpList incrs)))] ++ es)
 
 
+--Prints a list of int expressions
+printList :: State -> [Exp] -> ArgList -> IO ()
+printList s es (ArgEndNode inX) = do
+
+    print val
+    evalExp state es
+
+    where
+
+        tup = evalInt s inX
+        val = fst tup
+        state = snd tup
+
+printList s es (ArgListNode inX list) = do
+
+    print val
+    printList state es list
+
+    where
+
+        tup = evalInt s inX
+        val = fst tup
+        state = snd tup
+
 --Used with a for loop to get the list of expressions
 getExpList :: ExpList -> [Exp]
 getExpList (ExpEndNode e) = [e]
@@ -131,16 +158,6 @@ listToSeq :: [Exp] -> Exp
 listToSeq [] = error "You cannot generate a seq from an empty list of expressions!"
 listToSeq [e] = e
 listToSeq (e:es) = Seq e (listToSeq es)
-
-
---INPUT: an arg list data type which represents a list of variable names
---OUTPUT: a list of print expressions corresponding to each of these variable names
-getPrintExprList :: ArgList -> [Exp]
-
---base case
-getPrintExprList (ArgEndNode inX) = [PrintVar inX]
-getPrintExprList (ArgListNode inX list) = (PrintVar inX):(getPrintExprList list)
-
 
 --INPUT: state, boolean expression to evaluate
 --OUTPUT: evaluated boolean
@@ -170,7 +187,6 @@ evalInt s (TakeFrom i) = (peekFrom s i, dropFrom s i)
 evalInt s (GetVar str) = (getVar s str, s)
 evalInt s (GetLength i) = (getStreamLength s i, s)
 evalInt s (PeekFrom i) = (peekFrom  s i, s)
-
 
 evalInt s (Mul e1 e2) = ((fst $ evalInt s e1) * (fst $ evalInt sLHS e2), sRHS)
 
