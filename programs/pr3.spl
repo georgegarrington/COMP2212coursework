@@ -15,9 +15,11 @@ print(0);
 
 while(!streams[1].empty){
 
-    drop does same as "drop 1" in Haskell removes the head of the list
+    drop does same as "drop" in Haskell removes n elements from the head of the list,
+    except unlike haskell as our streams (and whole language) has state this actually changes the
+    state of the stream you call it on 
 
-    streams[1].drop;
+    streams[1].drop(1);
     print(streams[1].take, streams[0].take);
 
     you can see expressions are separated by semicolons
