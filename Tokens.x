@@ -16,6 +16,7 @@ tokens :-
   streams        {\p -> \s -> TokenStreams p} 
   take           {\p -> \s -> TokenTake p} 
   drop           {\p -> \s -> TokenDrop p} 
+  peek           {\p -> \s -> TokenPeek p} 
   print          {\p -> \s -> TokenPrint p} 
   printAll       {\p -> \s -> TokenPrintAll p}
   length         {\p -> \s -> TokenLength p}
@@ -60,6 +61,7 @@ data Token =
   TokenStreams AlexPosn        |
   TokenTake AlexPosn           |
   TokenDrop AlexPosn           |
+  TokenPeek AlexPosn           |
   TokenPrint AlexPosn          |
   TokenPrintAll AlexPosn       |
   TokenLength AlexPosn         |
@@ -103,6 +105,7 @@ tokenPosn (TokenEmpty  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenStreams  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenTake  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenDrop  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenPeek  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenPrint  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLength  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenTrue  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)

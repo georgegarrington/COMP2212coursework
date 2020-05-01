@@ -169,6 +169,8 @@ evalInt s (DataInt x) = (x,s)
 evalInt s (TakeFrom i) = (peekFrom s i, dropFrom s i)
 evalInt s (GetVar str) = (getVar s str, s)
 evalInt s (GetLength i) = (getStreamLength s i, s)
+evalInt s (PeekFrom i) = (peekFrom  s i, s)
+
 
 evalInt s (Mul e1 e2) = ((fst $ evalInt s e1) * (fst $ evalInt sLHS e2), sRHS)
 

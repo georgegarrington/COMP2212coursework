@@ -37,6 +37,7 @@ import Tokens
     for     { TokenFor _ }
     take    { TokenTake _ }
     drop    { TokenDrop _ }
+    peek    { TokenPeek _ }
     if      { TokenIf _ } 
     else    { TokenElse _ } 
     true    { TokenTrue _ }
@@ -91,6 +92,7 @@ IntExp : '(' IntExp ')' %prec BRAC {$2}
     | string {GetVar $1}
     | streams '['int']' '.' take {TakeFrom $3}
     | streams '['int']' '.' length {GetLength $3}
+    | streams '['int']' '.' peek {PeekFrom $3}
 
 --This will always evaluate to a boolean, it is a boolean "type"
 BExp : '(' BExp ')' %prec BRAC {$2}
@@ -151,6 +153,7 @@ data IntExp = Mul IntExp IntExp
          | GetVar String
          | TakeFrom Int
          | GetLength Int
+         | PeekFrom Int
             deriving (Show, Read)
 
 data BExp = And BExp BExp
