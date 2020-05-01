@@ -83,19 +83,6 @@ evalExp s ((SubEq var x):es) = evalExp (setVar state var ((getVar state var) - v
         state = snd tup
 
 
---Print the given int expression 
-{-
-evalExp s ((PrintVar inX):es) = do 
-
-    print val
-    evalExp state es
-
-where
-
-    tup = evalInt s inX
-    val = fst tup
-    state = snd tup-}
-
 {-Print all of the int expressions in the arglist args, printList will call the evalExp 
 on the rest of the expressions when it has finished printing out and evaluting the arguments-}
 evalExp s ((PrintAll args):es) = printList s es args
@@ -123,7 +110,7 @@ evalExp s ((For inits b incrs e):es) = do
     evalExp s ((getExpList inits) ++ [While b (listToSeq ([e] ++ (getExpList incrs)))] ++ es)
 
 
---Prints a list of int expressions
+--Prints a list of int expressions, then when done calls 
 printList :: State -> [Exp] -> ArgList -> IO ()
 printList s es (ArgEndNode inX) = do
 
@@ -260,7 +247,7 @@ dropFrom s i = dropFromAux s i []
 
 dropFromAux :: State -> Int -> [[Int]] -> State
 dropFromAux (_, xss) i _ | i < 0 || i >= (length xss) = error "Requested stream does not exist!"
-dropFromAux (_, []) _ _ = error "No element found in requested stream!"
+dropFromAux (_, []) _ _ = error "No streams were found!"
 dropFromAux (ys, (xs:xss)) 0 acc 
 
     | xs == [] = error "No element found in requested stream!"
