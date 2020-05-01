@@ -55,6 +55,7 @@ import Tokens
 %left NEG
 %left BRAC
 %% 
+
 OuterExp : Exp ';' OuterExp {Seq $1 $3}
         | Exp ';' {$1}
 
@@ -69,7 +70,7 @@ Exp : for '(' ExpList ';' BExp ';' ExpList ')' '{'OuterExp'}' {For $3 $5 $7 $10}
      | string '+''=' IntExp {AddEq $1 $4}
      | string '-''=' IntExp {SubEq $1 $4} 
      | print '(' ArgList ')' {PrintAll $3}
-     | streams '['int']''.'drop {DropFrom $3}
+     | streams '['int']''.'drop '('int')' {DropFrom $3 $8}
      | nothing {DataNothing}
      | end {EndProgram}
     
@@ -126,7 +127,7 @@ data Exp = Seq Exp Exp
          | AddEq String IntExp
          | SubEq String IntExp
          | PrintAll ArgList
-         | DropFrom Int
+         | DropFrom Int Int
          | DataNothing
          | EndProgram
          deriving (Show, Read)

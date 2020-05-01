@@ -88,7 +88,7 @@ on the rest of the expressions when it has finished printing out and evaluting t
 evalExp s ((PrintAll args):es) = printList s es args
 
 --Drop the head from stream i
-evalExp s ((DropFrom i):es) = evalExp (dropFrom s i) es    
+evalExp s ((DropFrom i j):es) = evalExp (dropFrom s i j) es    
 
 evalExp s ((IfEl b e1 e2):es) = if(evalBool s b) then evalExp s (e1:es) else evalExp s (e2:es)
 
@@ -170,10 +170,10 @@ evalInt :: State -> IntExp -> (Int, State)
 
 --Base cases
 evalInt s (DataInt x) = (x,s)
-evalInt s (TakeFrom i) = (peekFrom s i, dropFrom s i)
+evalInt s (TakeFrom i) = (peekFrom s i, dropFrom s i 1)
 evalInt s (GetVar str) = (getVar s str, s)
 evalInt s (GetLength i) = (getStreamLength s i, s)
-evalInt s (PeekFrom i) = (peekFrom  s i, s)
+evalInt s (PeekFrom i) = (peekFrom s i, s)
 
 evalInt s (Mul e1 e2) = ((fst $ evalInt s e1) * (fst $ evalInt sLHS e2), sRHS)
 
@@ -240,20 +240,21 @@ peekFrom (_, xss) i
     | otherwise = head (xss !! i)
 
 
---INPUT: state, which stream to drop from
+--INPUT: state, which stream to drop from, how many times to drop
 --OUTPUT: resulting state with the head removed from requested stream
-dropFrom :: State -> Int -> State
-dropFrom s i = dropFromAux s i []
+dropFrom :: State -> Int -> Int -> State
+dropFrom s i j = dropFromAux s i j []
 
-dropFromAux :: State -> Int -> [[Int]] -> State
-dropFromAux (_, xss) i _ | i < 0 || i >= (length xss) = error "Requested stream does not exist!"
-dropFromAux (_, []) _ _ = error "No streams were found!"
-dropFromAux (ys, (xs:xss)) 0 acc 
+dropFromAux :: State -> Int -> Int -> [[Int]] -> State
+dropFromAux (_, xss) i _ _ | i < 0 || i >= (length xss) = error "Requested stream does not exist!"
+dropFromAux (_, []) _ _ _ = error "No streams were found!"
+dropFromAux (ys, (xs:xss)) 0 j acc 
 
+    | j > length xs = error "Stream does not contain that many elements to drop from!"
     | xs == [] = error "No element found in requested stream!"
-    | otherwise = (ys, (acc ++ [drop 1 xs] ++ xss))
+    | otherwise = (ys, (acc ++ [drop j xs] ++ xss))
 
-dropFromAux (ys, (xs:xss)) i acc = dropFromAux (ys, xss) (i - 1) (acc ++ [xs])
+dropFromAux (ys, (xs:xss)) i j acc = dropFromAux (ys, xss) (i - 1) j (acc ++ [xs])
 
 
 --INPUT: state, the string of the variable

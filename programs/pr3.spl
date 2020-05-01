@@ -2,7 +2,7 @@ print(0);
 
 while(!streams[1].empty){
 
-    streams[1].drop;
+    streams[1].drop(1);
     print(streams[1].take, streams[0].take);
     
 };
