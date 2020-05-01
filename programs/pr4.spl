@@ -10,30 +10,19 @@ while(streams[0].length >= 3){
 end;
 
 /*
-while(streams[0].length() >= 3){
 
-    c = streams[0].take();
+while(streams[0].length >= 3){
 
-    
-    one other possible way of doing the below could be;
+    here you can see streams[n].take behaves as a normal int expression as it returns a value 
+    so it is perfectly fine to be used in this way
 
-    c *= 3;
-    c--;
+    trd = 3 * streams[0].take - 1; 
+    snd = 2 * streams[0].take;
 
-    
-
-    c = 3 * c - 1;
-    b = streams[0].take();
-
-    
-    As in java and haskell we have added the *=, /=, +=, -= operators for syntactic sugar.
-    We have also added the usual ++, and -- as handy keyword "methods" for increment and decrement
-    
-
-    b *= 2; 
-    a = streams[0].take();
-    printAll(a, b, c);
+    print(streams[0].take, snd, trd);
 
 };
 
-end();*/
+end;
+
+*/
