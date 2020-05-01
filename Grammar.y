@@ -29,7 +29,6 @@ import Tokens
     '='     { TokenEq _ }
     '>'     { TokenGt _ }
     '<'     { TokenLt _ }
-    '$'     { TokenDol _ }
     length  { TokenLength _ }
     empty   { TokenEmpty _ }
     print   { TokenPrint _ }

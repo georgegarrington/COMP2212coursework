@@ -1,46 +1,35 @@
 while(!streams[0].empty && !streams[1].empty && !streams[2].empty){
 
-    a = streams[2].take;
+    
+    a = /* you can see inline comments also work */ streams[2].take;
     b = streams[1].take;
     c = streams[0].take;
-    d = b + c;
-    e = a + b;
 
-    print(a, b, c, d, e);
+    print(a, b, c, b + c, a + b);
 
 };
 
 end;
 
 /*
-All the usual expected boolean operators have been implemented
 
-The while loop is really quite simple, it simply checks if some condition is true,
-if so then carry out the expression within the curly braces (which may alter the state
-in some way and this updated state is passed to the next evaluation method call), then
-cons another while loop data type of the same form to the list of sub expressions passed
-into the next evaluation method call along with the new updated state and check the same
-boolean condition again but this time according to the new updated state so the boolean
-condition may no longer hold
+while(!streams[0].empty && !streams[1].empty && !streams[2].empty){
 
-while(!streams[0].empty() && !streams[1].empty() && !streams[2].empty()){
+    variables in our language are assigned int expressions which are then evaluated
+    to their actual int value and stored in our data structure in the interpreter
+    along with the name of the variable
 
-    a = streams[2].take(); //C1
-    b = streams[1].take(); //B1
-    c = streams[0].take(); //A1
-    d = b + c; //B1 + A1
-    e = a + b; //B1 + C1 
+    a = streams[2].take;
+    b = streams[1].take;
+    c = streams[0].take;
 
-    This keyword (method) is syntactic sugar for calling print(a), print(b)... etc.
-    
-    printAll(a, b, c, d, e);
+    print takes a list of int expressions and as "b + c" and "a + b" are
+    also int expressions they are perfectly valid arguments
 
-
-Unlike in Java, (apart from initialisation and increment expressions in for loops), EVERY
-expression in our language is recognised as being seperated by ";", even at the end of curly 
-brace expressions like loops and if/else statements
-
+    print(a, b, c, b + c, a + b);
 
 };
 
-end();*/
+end;
+
+*/

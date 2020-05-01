@@ -44,7 +44,6 @@ tokens :-
   \>             {\p -> \s -> TokenGt p}
   \<             {\p -> \s -> TokenLt p}
   \"             {\p -> \s -> TokenQuote p}
-  \$             {\p -> \s -> TokenDol p}
   if             {\p -> \s -> TokenIf p}
   else           {\p -> \s -> TokenElse p}
   end            {\p -> \s -> TokenEnd p}
@@ -90,13 +89,11 @@ data Token =
   TokenGt AlexPosn             |
   TokenLt AlexPosn             |  
   TokenQuote AlexPosn          | --Not within our grammar, purely added so could use quotes in comments :)
-  TokenDol AlexPosn            |
   TokenIf AlexPosn             |
   TokenElse AlexPosn           |
   TokenEnd AlexPosn            |
   TokenInt AlexPosn Int        |
   TokenString AlexPosn String  
-
   deriving (Eq,Show) 
 
 tokenPosn :: Token -> String
@@ -133,7 +130,6 @@ tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenGt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLt (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenQuote (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenDol (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenIf (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenElse (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenEnd (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
