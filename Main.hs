@@ -18,7 +18,6 @@ main = do
 
         --If the input is empty then run the program with n empty streams where n is the number of expected streams 
         streams <- return $ generateNEmptyStreams $ getMaxStreams rootExp
-        print $ "the streams are: " ++ (show streams)
         state <- return ([],streams)
         evalExp state [rootExp]
 
@@ -28,14 +27,6 @@ main = do
         state <- return ([],streams)
         evalExp state [rootExp]
 
-{-
-    if(length streams == 0) then error "Please make sure you have provided stream data!" else do
-   
-    state <- return ([],streams)
-    tokens <- return $ removeMultiLines $ alexScanTokens string
-    rootExp <- return $ parse $ tokens
-    evalExp state [rootExp]                
--}
 
 {-
 Mutually recursive methods to remove all multiline comment tokens and the tokens between them. Could not 
@@ -89,7 +80,7 @@ getMaxStreams (Seq e1 e2) = max (getMaxStreams e1) (getMaxStreams e2)
 getMaxStreams (While _ e) = getMaxStreams e
 getMaxStreams (IfEl _ e1 e2) = max (getMaxStreams e1) (getMaxStreams e2)
 
---Inc var, dec var, nothing and end program not applicable
+--Inc var, dec var, nothing and end program not applicable as they do not reference streams
 getMaxStreams _ = 0
 
 
@@ -113,8 +104,10 @@ getMaxInIntX (Add inX1 inX2) = max (getMaxInIntX inX1) (getMaxInIntX inX2)
 getMaxInIntX (Sub inX1 inX2) = max (getMaxInIntX inX1) (getMaxInIntX inX2)
 getMaxInIntX (Expo inX1 inX2) = max (getMaxInIntX inX1) (getMaxInIntX inX2)
 getMaxInIntX (Mod inX1 inX2) = max (getMaxInIntX inX1) (getMaxInIntX inX2)
+getMaxInIntX (Max inX1 inX2) = max (getMaxInIntX inX1) (getMaxInIntX inX2)
+getMaxInIntX (Min inX1 inX2) = max (getMaxInIntX inX1) (getMaxInIntX inX2)
 
---Get var, and data int are not applicable as they dont return streams
+--Get var, and data int are not applicable as they do not reference streams
 getMaxInIntX _ = 0
 
 --Return the highest number stream referenced in the print argument list

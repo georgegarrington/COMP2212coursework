@@ -22,7 +22,8 @@ while(!streams[1].empty){
     streams[1].drop(1);
     print(streams[1].take, streams[0].take);
 
-    you can see expressions are separated by semicolons
+    you can see expressions are separated by semicolons and unlike in java even
+    curly brace expressions are seperated by semicolons
     
 };
 

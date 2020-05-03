@@ -19,7 +19,7 @@ end;
 
 Here is our original possibly more clear solution using a while loop, feel free
 to uncomment this section (make sure you wrap this text here in a multiline comment though)
-and comment out the solution above to verify that this solution also does indeed work
+and comment out the solution above to verify that this solution also does indeed work aswell
 
 sum = 0;
 
@@ -46,8 +46,10 @@ for(sum = 0; !streams[0].empty; sum += streams[0].take, print(sum)){
 
     nothing keyword does just that - nothing. We felt this would be useful in certain
     situations e.g. here when you wish to simply do everything using the expressions
-    and condition in for loop parentheses, it is also necessary as in our grammar
-    the for loop is expecting some expression so have the nothing keyword to solve this
+    and condition in for loop parentheses, or when executing an if/else statement if you
+    only want to perform some expression if a condition is true. It is also necessary as in our grammar
+    the for loop is expecting some expression also if you were to do nothing in one expression of
+    an if/else statement, use the nothing keyword "method" to solve this
 
     nothing;
 

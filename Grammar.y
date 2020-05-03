@@ -29,6 +29,8 @@ import Tokens
     '='     { TokenEq _ }
     '>'     { TokenGt _ }
     '<'     { TokenLt _ }
+    maxOf   { TokenMaxOf _ }
+    minOf   { TokenMinOf _ }
     length  { TokenLength _ }
     empty   { TokenEmpty _ }
     print   { TokenPrint _ }
@@ -50,7 +52,8 @@ import Tokens
 %left '&&' '||'
 %left '!'
 %left '+' '-'
-%left '*' '/' '%' '^'
+%left '*' '/' '%'
+%left '^'
 %left ';'
 %left NEG
 %left BRAC
@@ -88,6 +91,8 @@ IntExp : '(' IntExp ')' %prec BRAC {$2}
     | IntExp '-' IntExp {Sub $1 $3}
     | IntExp '%' IntExp {Mod $1 $3}
     | IntExp '^' IntExp {Expo $1 $3}
+    | maxOf '('IntExp','IntExp')' {Max $3 $5}
+    | minOf '('IntExp','IntExp')' {Min $3 $5}
     | '-' IntExp %prec NEG {Neg $2}
     | int {DataInt $1}
     | string {GetVar $1}
@@ -148,6 +153,8 @@ data IntExp = Mul IntExp IntExp
          | Sub IntExp IntExp 
          | Expo IntExp IntExp
          | Mod IntExp IntExp
+         | Max IntExp IntExp
+         | Min IntExp IntExp
          | Neg IntExp
          | DataInt Int
          | GetVar String

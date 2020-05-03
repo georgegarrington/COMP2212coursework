@@ -168,13 +168,31 @@ evalBool s (StreamEmpty i) = isEmpty s i
 --OUTPUT: evaluated int and the resulting (possible) changed state with streams altered
 evalInt :: State -> IntExp -> (Int, State)
 
---Base cases
+--Base cases, these do not alter state so just return the same state
 evalInt s (DataInt x) = (x,s)
 evalInt s (TakeFrom i) = (peekFrom s i, dropFrom s i 1)
 evalInt s (GetVar str) = (getVar s str, s)
 evalInt s (GetLength i) = (getStreamLength s i, s)
 evalInt s (PeekFrom i) = (peekFrom s i, s)
 
+evalInt s (Max e1 e2) = (max (fst $ evalInt s e1) (fst $ evalInt sLHS e2), sRHS)
+
+    where
+
+        sLHS = snd $ evalInt s e1
+        sRHS = snd $ evalInt s e2
+
+evalInt s (Min e1 e2) = (min (fst $ evalInt s e1) (fst $ evalInt sLHS e2), sRHS)
+
+    where
+
+            sLHS = snd $ evalInt s e1
+            sRHS = snd $ evalInt s e2
+
+{-
+Make sure to do each new call using the newly evaluated state of the last call,
+and return the resulting state of the final evaluation in the returned tuple
+-}
 evalInt s (Mul e1 e2) = ((fst $ evalInt s e1) * (fst $ evalInt sLHS e2), sRHS)
 
     where
@@ -250,7 +268,7 @@ dropFromAux (_, xss) i _ _ | i < 0 || i >= (length xss) = error "Requested strea
 dropFromAux (_, []) _ _ _ = error "No streams were found!"
 dropFromAux (ys, (xs:xss)) 0 j acc 
 
-    | j > length xs = error "Stream does not contain that many elements to drop from!"
+    | j > length xs = error "Cannot drop more elements than there are in the stream!"
     | xs == [] = error "No element found in requested stream!"
     | otherwise = (ys, (acc ++ [drop j xs] ++ xss))
 
@@ -284,7 +302,7 @@ setVarAux ((str,val):vars,streams) var x acc
 --INPUT: state, which stream is being queried
 --OUTPUT: whether or not requested stream is empty
 isEmpty :: State -> Int -> Bool
-isEmpty (_, []) _ = error "Stream not found!" 
+isEmpty (_, []) _ = error "Stream does not exist!" 
 isEmpty (_, (xs:xss)) 0
     | xs == [] = True
     | otherwise = False

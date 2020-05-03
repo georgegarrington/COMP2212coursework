@@ -13,6 +13,12 @@ end;
 
 /*
 
+If empty input i.e. no stream data is provided, before execution of the program begins, 
+the interpreter will look through the parse tree of the program and determine the number 
+of expected streams by finding the highest number stream referenced and it will instead 
+run the program using this many empty streams (i.e. here would be 3 as the streams are 0 indexed
+so it adds one when it finds the max)
+
 while(!streams[0].empty && !streams[1].empty && !streams[2].empty){
 
     variables in our language are assigned int expressions which are then evaluated

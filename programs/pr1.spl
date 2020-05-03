@@ -17,8 +17,11 @@ end;
 /*
 
 call keyword "methods" on a stream by specifying which stream i.e. stream[n].keyword
+our haskell main method loads the stream data into a list of lists before evaluation
+which can be referenced through this zero indexed notation
 
-while some boolean expression do some expression
+All the standard boolean operations have been implemented, with "!" as you can see here 
+similar to java being used for boolean inversion
 
 while(!streams[0].empty){
 
