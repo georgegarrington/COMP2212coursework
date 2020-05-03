@@ -17,13 +17,12 @@ main = do
     if(length streams == 0) then do
 
         --If the input is empty then run the program with n empty streams where n is the number of expected streams 
-        streams <- return $ generateNEmptyStreams $ getMaxStreams rootExp
-        state <- return ([],streams)
+        emptyStreams <- return $ generateNEmptyStreams $ getMaxStreams rootExp
+        state <- return ([],emptyStreams)
         evalExp state [rootExp]
 
-    else do
+        else do
 
-        streams <- reader []
         state <- return ([],streams)
         evalExp state [rootExp]
 
@@ -56,6 +55,7 @@ generateNEmptyStreams :: Int -> [[Int]]
 --Have to cons another empty list as the empty list represents the end of a list
 generateNEmptyStreams 0 = []
 generateNEmptyStreams n = []:(generateNEmptyStreams $ n - 1)
+
 
 {-
 Returns the highest number stream referenced in the program so the interpreter runs with 
@@ -110,10 +110,12 @@ getMaxInIntX (Min inX1 inX2) = max (getMaxInIntX inX1) (getMaxInIntX inX2)
 --Get var, and data int are not applicable as they do not reference streams
 getMaxInIntX _ = 0
 
+
 --Return the highest number stream referenced in the print argument list
 getMaxInPrintList :: ArgList -> Int
 getMaxInPrintList (ArgListNode inX list) = max (getMaxInIntX inX) (getMaxInPrintList list)
 getMaxInPrintList (ArgEndNode inX) = getMaxInIntX inX
+
 
 --Return the highest number stream referenced in the expression list
 getMaxInExpList :: ExpList -> Int
