@@ -12,20 +12,38 @@ main = do
     string <- readFile path
     tokens <- return $ removeMultiLines $ alexScanTokens string
     rootExp <- return $ parse $ tokens
+
+    --The expected number of streams
+    expected <- return $ getMaxStreams rootExp
+
+    if(isTakeFromInBoolExps rootExp) then 
+
+        error "\n\nERROR! Using streams[n].take in int comparison within a boolean expression is not currently supported. Please remove any streams[n].take expressions from all boolean expressions and try again. (e.g. in all while/for loops and all if/else statements) If you need to compare the value of the head of a stream in a boolean expression you can achieve the same thing by using the 'peek' keyword then calling streams[n].drop(1) directly after the boolean expression\n"
+
+    else do 
+
     streams <- reader []
 
     if(length streams == 0) then do
 
         --If the input is empty then run the program with n empty streams where n is the number of expected streams 
-        emptyStreams <- return $ generateNEmptyStreams $ getMaxStreams rootExp
+        emptyStreams <- return $ generateNEmptyStreams $ expected
         state <- return ([],emptyStreams)
         evalExp state [rootExp]
 
         else do
 
+        if(length streams < expected) then do 
+
+            error $ "\n\nERROR! Incorrect number of streams provided! This program was expecting: " ++ (show expected) ++ " streams, but received: " ++ (show $ length streams) ++ ". Please make sure you have provided the correct number of streams in your stream data file and try again\n"
+
+        else do 
+
         state <- return ([],streams)
         evalExp state [rootExp]
 
+
+--VARIOUS ERROR CHECKING AND UTILITY FUNCTIONS DEFINED BELOW
 
 {-
 Mutually recursive methods to remove all multiline comment tokens and the tokens between them. Could not 
@@ -39,13 +57,15 @@ removeMultiLines [] = []
 
 -- "/*" start of a multiline comment looks like this
 removeMultiLines ((TokenDiv _):(TokenTimes _):toks) = dropCommentBody toks
+removeMultiLines ((TokenTimes _ ):(TokenDiv _ ):toks) = error "\n\nERROR! Expected a multiline comment start but found a misplaced multiline comment end instead! \n"
 removeMultiLines (t:toks) = t:(removeMultiLines toks)
 
 dropCommentBody :: [Token] -> [Token]
-dropCommentBody [] = error "Multiline comment was declared without an end!"
+dropCommentBody [] = error "\n\nERROR! Multiline comment was declared without an end! \n"
 
 -- "*/" end of a multiline comment looks like this
 dropCommentBody ((TokenTimes _):(TokenDiv _):toks) = removeMultiLines toks
+dropCommentBody ((TokenDiv _ ):(TokenTimes _ ):toks) = error "\n\nERROR! Expected a multiline comment end but found a misplaced multiline comment start instead! \n"
 dropCommentBody (t:toks) = dropCommentBody toks
 
 
@@ -121,3 +141,52 @@ getMaxInPrintList (ArgEndNode inX) = getMaxInIntX inX
 getMaxInExpList :: ExpList -> Int
 getMaxInExpList (ExpListNode e list) = max (getMaxStreams e) (getMaxInExpList list)
 getMaxInExpList (ExpEndNode e) = getMaxStreams e
+
+
+{-
+Goes through the parse tree of the program and checks "streams[n].take"
+has not been used in any bool expressions as changing state is not supported
+by the evalBool function
+-}
+isTakeFromInBoolExps :: Exp -> Bool
+
+--The base cases; check the boolean expressions
+isTakeFromInBoolExps (While bX e) = (checkTakeFrom bX) || (isTakeFromInBoolExps e)
+isTakeFromInBoolExps (For _ bX _ e) = (checkTakeFrom bX) || (isTakeFromInBoolExps e)
+isTakeFromInBoolExps (IfEl bX e1 e2) = (checkTakeFrom bX) || (isTakeFromInBoolExps e1) || (isTakeFromInBoolExps e2)
+isTakeFromInBoolExps (Seq e1 e2) = (isTakeFromInBoolExps e1) || (isTakeFromInBoolExps e2)
+
+--All other cases are redundant as they do not use boolean expressions
+isTakeFromInBoolExps _ = False
+
+checkTakeFrom :: BExp -> Bool
+checkTakeFrom (And bX1 bX2) = (checkTakeFrom bX1) || (checkTakeFrom bX2)
+checkTakeFrom (Or bX1 bX2) = (checkTakeFrom bX1) || (checkTakeFrom bX2)
+checkTakeFrom (Not bX) = (checkTakeFrom bX)
+checkTakeFrom (GThan inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeFrom (LThan inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeFrom (GThanEQ inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeFrom (LThanEQ inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeFrom (Equal inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeFrom (NEqual inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+
+--All other cases redundant as they do not use take from (Stream empty, databool)
+checkTakeFrom _ = False
+
+checkTakeInIntX :: IntExp -> Bool
+
+--The only base case that returns true in this long chain of functions :)
+checkTakeInIntX (TakeFrom _ ) = True
+
+checkTakeInIntX (Mul inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeInIntX (Div inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeInIntX (Add inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeInIntX (Sub inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeInIntX (Mod inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeInIntX (Expo inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeInIntX (Max inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeInIntX (Min inX1 inX2) = (checkTakeInIntX inX1) || (checkTakeInIntX inX2)
+checkTakeInIntX (Neg inX) = checkTakeInIntX inX
+
+--All other cases redundant
+checkTakeInIntX _ = False

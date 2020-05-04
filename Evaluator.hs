@@ -134,6 +134,7 @@ printList s es (ArgListNode inX list) = do
         val = fst tup
         state = snd tup
 
+
 --Used with a for loop to get the list of expressions
 getExpList :: ExpList -> [Exp]
 getExpList (ExpEndNode e) = [e]
@@ -142,7 +143,14 @@ getExpList (ExpListNode e list) = e:(getExpList list)
 
 --Turns a list of expressions into a seq data type with arbitrary many inner seqs
 listToSeq :: [Exp] -> Exp
-listToSeq [] = error "You cannot generate a seq from an empty list of expressions!"
+
+{-
+Many errors such as these are more or less impossible as our grammar physically does not allow a
+for loop with no expression list for the incremental expressions and for many other errors the validation
+and error checking steps that are performed in Main before the evaluation method is called will not allow
+e.g. streams[3].take if data for only 2 streams is provided (streams are zero indexed)
+-}
+listToSeq [] = error "\n\nERROR! For loop detected with no incremental expressions! If you do not want any incremental steps then please place a single 'nothing' keyword in the incremental expressions list.\n"
 listToSeq [e] = e
 listToSeq (e:es) = Seq e (listToSeq es)
 
@@ -155,12 +163,17 @@ evalBool s (DataBool b) = b
 evalBool s (And e1 e2) = (evalBool s e1) && (evalBool s e2)
 evalBool s (Or e1 e2) = (evalBool s e1) || (evalBool s e2)
 evalBool s (Not e) = not $ evalBool s e
-evalBool s (GThan ix1 ix2) = (evalInt s ix1) > (evalInt s ix2)
-evalBool s (LThan ix1 ix2) = (evalInt s ix1) < (evalInt s ix2)
-evalBool s (GThanEQ ix1 ix2) = (evalInt s ix1) >= (evalInt s ix2)
-evalBool s (LThanEQ ix1 ix2) = (evalInt s ix1) <= (evalInt s ix2)
-evalBool s (Equal ix1 ix2) = (evalInt s ix1) == (evalInt s ix2)
-evalBool s (NEqual ix1 ix2) = (evalInt s ix1) /= (evalInt s ix2)
+
+{-
+Don't allow using streams[n].take in int comparison in a boolean expression,
+disregard possible change in state
+-}
+evalBool s (GThan ix1 ix2) = (fst $ evalInt s ix1) > (fst $ evalInt s ix2)
+evalBool s (LThan ix1 ix2) = (fst $ evalInt s ix1) < (fst $ evalInt s ix2)
+evalBool s (GThanEQ ix1 ix2) = (fst $ evalInt s ix1) >= (fst $ evalInt s ix2)
+evalBool s (LThanEQ ix1 ix2) = (fst $ evalInt s ix1) <= (fst $ evalInt s ix2)
+evalBool s (Equal ix1 ix2) = (fst $ evalInt s ix1) == (fst $ evalInt s ix2)
+evalBool s (NEqual ix1 ix2) = (fst $ evalInt s ix1) /= (fst $ evalInt s ix2)
 evalBool s (StreamEmpty i) = isEmpty s i
 
 
@@ -244,7 +257,7 @@ evalInt s (Neg e) = ((-1) * (fst $ evalInt s e), snd $ evalInt s e)
 getStreamLength :: State -> Int -> Int
 getStreamLength (_, xss) i 
 
-    | i >= (length xss) || i < 0 = error "Requested stream does not exist!"
+    | i >= (length xss) || i < 0 = error $ "\n\nERROR! Requested stream: " ++ (show i) ++ " does not exist!\n"
     | otherwise = length (xss !! i)
     
 
@@ -253,8 +266,8 @@ getStreamLength (_, xss) i
 peekFrom :: State -> Int -> Int
 peekFrom (_, xss) i 
 
-    | i >= (length xss) || i < 0 = error "Requested stream does not exist!"
-    | (xss !! i) == [] = error "No element found in requested stream!"
+    | i >= (length xss) || i < 0 = error $ "\n\nERROR! Requested stream: " ++ (show i) ++ " does not exist!\n"
+    | (xss !! i) == [] = error "\n\nERROR! No element found in requested stream!\n"
     | otherwise = head (xss !! i)
 
 
@@ -264,28 +277,28 @@ dropFrom :: State -> Int -> Int -> State
 dropFrom s i j = dropFromAux s i j []
 
 dropFromAux :: State -> Int -> Int -> [[Int]] -> State
-dropFromAux (_, xss) i _ _ | i < 0 || i >= (length xss) = error "Requested stream does not exist!"
-dropFromAux (_, []) _ _ _ = error "No streams were found!"
+dropFromAux (_, xss) i _ _ | i < 0 || i >= (length xss) = error $ "\n\nERROR! Requested stream: " ++ (show i) ++ " does not exist!\n"
+dropFromAux (_, []) _ _ _ = error "\n\nERROR! No streams were found!\n"
 dropFromAux (ys, (xs:xss)) 0 j acc 
 
-    | j > length xs = error "Cannot drop more elements than there are in the stream!"
-    | xs == [] = error "No element found in requested stream!"
+    | j > length xs = error "\n\nERROR! Cannot drop more elements than there are in the stream!\n"
+    | xs == [] = error $ "\n\nERROR! No element found in requested stream!\n"
     | otherwise = (ys, (acc ++ [drop j xs] ++ xss))
 
 dropFromAux (ys, (xs:xss)) i j acc = dropFromAux (ys, xss) (i - 1) j (acc ++ [xs])
 
 
---INPUT: state, the string of the variable
+--INPUT: state, the string (name) of the variable
 --OUTPUT: state, the value of the variable
 getVar :: State -> String -> Int
-getVar ([],_) str = error "Var does not exist!"
+getVar ([],_) str = error $ "\n\nERROR! Var with name " ++ str ++ " does not exist!\n"
 getVar (((str1,x):xs),_) str2
 
     | str1 == str2 = x
     | otherwise = getVar (xs,[]) str2
 
 
---INPUT: state, variable name to change or add, value of the variable
+--INPUT: state, variable name to update or add, value of the variable
 --OUTPUT: resulting state
 setVar :: State -> String -> Int -> State
 setVar s var x = setVarAux s var x []
@@ -302,8 +315,9 @@ setVarAux ((str,val):vars,streams) var x acc
 --INPUT: state, which stream is being queried
 --OUTPUT: whether or not requested stream is empty
 isEmpty :: State -> Int -> Bool
-isEmpty (_, []) _ = error "Stream does not exist!" 
-isEmpty (_, (xs:xss)) 0
-    | xs == [] = True
+isEmpty (_, []) _ = error "\n\nERROR! No streams were found so cannot check if they are empty!\n" 
+isEmpty (_,streams) n
+
+    | n < 0 || n >= (length streams) = error $ "\n\nERROR! Stream index: " ++ (show n) ++ " is invalid!\n"
+    | streams !! n == [] = True
     | otherwise = False
-isEmpty (_, (xs:xss)) i = isEmpty ([], xss) (i - 1)
