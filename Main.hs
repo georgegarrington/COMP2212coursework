@@ -83,8 +83,9 @@ this number many empty streams if no input is given
 -}
 getMaxStreams :: Exp -> Int
 
---Other base case when stream is referenced in drop from
+--base cases when stream is referenced in drop from
 getMaxStreams (DropFrom i _) = i + 1
+getMaxStreams (ReverseStream i) = i + 1
 
 --The base cases, when int expressions are referenced
 getMaxStreams (SetVar _ inX) = getMaxInIntX inX

@@ -46,6 +46,7 @@ import Tokens
     false   { TokenFalse _ }
     end     { TokenEnd _ }
     nothing { TokenNothing _ }
+    reverse { TokenReverse _ }
     int     { TokenInt _ $$ } 
     string  { TokenString _ $$ }
 
@@ -74,6 +75,7 @@ Exp : for '(' ExpList ';' BExp ';' ExpList ')' '{'OuterExp'}' {For $3 $5 $7 $10}
      | string '-''=' IntExp {SubEq $1 $4} 
      | print '(' ArgList ')' {PrintAll $3}
      | streams '['int']''.'drop '('int')' {DropFrom $3 $8}
+     | streams '['int']''.'reverse {ReverseStream $3}
      | nothing {DataNothing}
      | end {EndProgram}
     
@@ -133,6 +135,7 @@ data Exp = Seq Exp Exp
          | SubEq String IntExp
          | PrintAll ArgList
          | DropFrom Int Int
+         | ReverseStream Int
          | DataNothing
          | EndProgram
          deriving (Show, Read)

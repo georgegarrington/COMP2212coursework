@@ -90,6 +90,8 @@ evalExp s ((PrintAll args):es) = printList s es args
 --Drop the head from stream i
 evalExp s ((DropFrom i j):es) = evalExp (dropFrom s i j) es    
 
+evalExp s ((ReverseStream i):es) = evalExp (reverseStream s i) es
+
 evalExp s ((IfEl b e1 e2):es) = if(evalBool s b) then evalExp s (e1:es) else evalExp s (e2:es)
 
 --If b evalutes to true then carry out expression e and reassess after
@@ -251,6 +253,24 @@ evalInt s (Expo e1 e2) = ((fst $ evalInt s e1) ^ (fst $ evalInt sLHS e2), sRHS)
 
 evalInt s (Neg e) = ((-1) * (fst $ evalInt s e), snd $ evalInt s e)
 
+
+--INPUT: state, which stream index to reverse
+--OUTPUT: resulting state with reversed stream
+reverseStream :: State -> Int -> State
+reverseStream (vars, streams) i 
+
+    | i < 0 || i >= (length streams) = error $ "\n\nERROR! Reverse called on invalid stream index: " ++ (show i) ++ "\n"
+    | otherwise = reverseStreamAux (vars, streams) i []
+
+--Helper method which uses an accumulator
+reverseStreamAux :: State -> Int -> [[Int]] -> State
+reverseStreamAux (vars, []) _ _ = error "\n\nERROR! Reverse was called but no streams were found!\n"
+reverseStreamAux (vars, (s:ss)) 0 acc
+
+    | s == [] = (vars, acc ++ [[]] ++ ss)
+    | otherwise = (vars, acc ++ [reverse s] ++ ss)
+
+reverseStreamAux (vars, (s:ss)) n acc = reverseStreamAux (vars, ss) (n - 1) (acc ++ [s])
 
 --INPUT: state, which stream is being queried
 --OUTPUT: length of requested stream

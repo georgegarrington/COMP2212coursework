@@ -25,6 +25,7 @@ tokens :-
   nothing        {\p -> \s -> TokenNothing p}
   maxOf          {\p -> \s -> TokenMaxOf p}
   minOf          {\p -> \s -> TokenMinOf p}
+  reverse        {\p -> \s -> TokenReverse p}
   \(             {\p -> \s -> TokenLParen p}
   \)             {\p -> \s -> TokenRParen p}
   \[             {\p -> \s -> TokenLSquare p}  
@@ -72,6 +73,7 @@ data Token =
   TokenNothing AlexPosn        |
   TokenMaxOf AlexPosn          |
   TokenMinOf AlexPosn          |
+  TokenReverse AlexPosn        |
   TokenLParen AlexPosn         |
   TokenRParen AlexPosn         |
   TokenLSquare AlexPosn        |
@@ -117,6 +119,7 @@ tokenPosn (TokenFalse  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenNothing  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenMaxOf  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenMinOf  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenReverse  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenRParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLSquare  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)

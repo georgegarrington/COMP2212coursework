@@ -1,0 +1,7 @@
+streams[0].reverse;
+
+while(!streams[0].empty){
+
+   print(streams[0].take);
+
+};
