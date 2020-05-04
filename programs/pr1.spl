@@ -21,7 +21,11 @@ our haskell main method loads the stream data into a list of lists before evalua
 which can be referenced through this zero indexed notation
 
 All the standard boolean operations have been implemented, with "!" as you can see here 
-similar to java being used for boolean inversion
+similar to java being used for boolean inversion. We have chose to not allow using streams[n].take
+within int comparisons in a boolean expression as it is not a pure int expression and has a side effect, 
+so before evaluation the haskell code scans the parse tree and makes sure there are no boolean expressions with 
+int comparison expressions that contain "streams[n].take", it will show an error message if there are. 
+However, the peek keyword can be used instead to achieve the same thing.
 
 while(!streams[0].empty){
 

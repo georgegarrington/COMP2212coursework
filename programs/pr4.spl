@@ -15,7 +15,7 @@ while(streams[0].length >= 3){
 
     here you can see streams[n].take behaves as a normal int expression as it returns a value 
     so it is perfectly fine to be used in this way even though it is different from other
-    int expressions as it is the only one that has a side effect
+    int expressions as it is the only "non pure" one that has a side effect
 
     trd = 3 * streams[0].take - 1; 
     snd = 2 * streams[0].take;
