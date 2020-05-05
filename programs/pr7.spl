@@ -12,7 +12,15 @@ while(streams[0].length >= 3){
 
     } else {
 
-        nothing;
+        /*
+        Output is expecting skipping 2 then printing then 
+        skipping 3 then printing, so skipping 2 then printing
+        twice in a row is not valid (which is entirely possible as stream 
+        length could be 3 even if it is not 4 meaning the first
+        sequence would be allowed to print again) so simply end program 
+        */
+        
+        end;
 
     };
 

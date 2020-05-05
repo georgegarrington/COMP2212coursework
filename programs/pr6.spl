@@ -1,13 +1,18 @@
 while(!streams[0].empty && !streams[1].empty){
 
-    //Try to print as many outputs as possible but print part even if not enough
-    for(i = 0; i < 2 && !streams[0].empty; i++){
+    //Try to print as many outputs as possible so print part even if not enough
+    for(i = 2; i > 0 && !streams[0].empty; i--){
         
         print(streams[0].take);
 
     };
 
-    //Try to print as many outputs as possible but print part even if not enough
+    /*
+    ++ and -- like in java are syntactic sugar for 
+    incrementing and decrementing a variable, there is an
+    example of each included here so you can see that they both
+    work
+    */
     for(i = 0; i < 3 && !streams[1].empty; i++){
 
         print(streams[1].take);

@@ -5,6 +5,13 @@ of the output as possible even if cant print out the whole sequence
 */
 while(!streams[0].empty && !streams[1].empty){
 
+    /*
+    As expressions are seperated by semicolons and new line / white space
+    characters are in fact not even recognised by our language, you can declare
+    multiple statements on the same line in a fashion like this. You
+    can see here where you want to declare multiple variables it can 
+    help to make the code more readable and concise
+    */
     a1 = streams[0].take; b1 = streams[1].take;
     print(a1, b1);
 
@@ -54,7 +61,6 @@ while(!streams[0].empty && !streams[1].empty){
         //If 5 element pairs have been printed then a checksum can be calculated
         a5 = streams[0].take; b5 = streams[1].take;
         checksum = a1 + a2 + a3 + a4 + a5 - b1 - b2 - b3 - b4 - b5;
-
         print(a5, b5, checksum);
 
     } else {
