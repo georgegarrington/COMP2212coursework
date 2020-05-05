@@ -1,0 +1,21 @@
+//Has to be at least 3 elements in the stream to print first part of output sequence
+while(streams[0].length >= 3){
+
+    streams[0].drop(2);
+    print(streams[0].take);
+
+    //If there are enough elements in stream then print the next part
+    if(streams[0].length >= 4){
+
+        streams[0].drop(3);
+        print(streams[0].take);
+
+    } else {
+
+        nothing;
+
+    };
+
+};
+
+end;

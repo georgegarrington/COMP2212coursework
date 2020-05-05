@@ -1,0 +1,19 @@
+while(!streams[0].empty && !streams[1].empty){
+
+    //Try to print as many outputs as possible but print part even if not enough
+    for(i = 0; i < 2 && !streams[0].empty; i++){
+        
+        print(streams[0].take);
+
+    };
+
+    //Try to print as many outputs as possible but print part even if not enough
+    for(i = 0; i < 3 && !streams[1].empty; i++){
+
+        print(streams[1].take);
+
+    };
+
+};
+
+end;
