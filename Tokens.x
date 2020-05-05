@@ -16,12 +16,16 @@ tokens :-
   streams        {\p -> \s -> TokenStreams p} 
   take           {\p -> \s -> TokenTake p} 
   drop           {\p -> \s -> TokenDrop p} 
+  peek           {\p -> \s -> TokenPeek p} 
   print          {\p -> \s -> TokenPrint p} 
   printAll       {\p -> \s -> TokenPrintAll p}
   length         {\p -> \s -> TokenLength p}
   true           {\p -> \s -> TokenTrue p}
   false          {\p -> \s -> TokenFalse p}
   nothing        {\p -> \s -> TokenNothing p}
+  maxOf          {\p -> \s -> TokenMaxOf p}
+  minOf          {\p -> \s -> TokenMinOf p}
+  reverse        {\p -> \s -> TokenReverse p}
   \(             {\p -> \s -> TokenLParen p}
   \)             {\p -> \s -> TokenRParen p}
   \[             {\p -> \s -> TokenLSquare p}  
@@ -60,12 +64,16 @@ data Token =
   TokenStreams AlexPosn        |
   TokenTake AlexPosn           |
   TokenDrop AlexPosn           |
+  TokenPeek AlexPosn           |
   TokenPrint AlexPosn          |
   TokenPrintAll AlexPosn       |
   TokenLength AlexPosn         |
   TokenTrue AlexPosn           |
   TokenFalse AlexPosn          |
   TokenNothing AlexPosn        |
+  TokenMaxOf AlexPosn          |
+  TokenMinOf AlexPosn          |
+  TokenReverse AlexPosn        |
   TokenLParen AlexPosn         |
   TokenRParen AlexPosn         |
   TokenLSquare AlexPosn        |
@@ -94,7 +102,6 @@ data Token =
   TokenEnd AlexPosn            |
   TokenInt AlexPosn Int        |
   TokenString AlexPosn String  
-
   deriving (Eq,Show) 
 
 tokenPosn :: Token -> String
@@ -104,12 +111,15 @@ tokenPosn (TokenEmpty  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenStreams  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenTake  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenDrop  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenPeek  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenPrint  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenPrintAll  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLength  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenTrue  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenFalse  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenNothing  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenMaxOf  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenMinOf  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenReverse  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenRParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLSquare  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)

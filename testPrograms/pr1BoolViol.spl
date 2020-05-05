@@ -1,0 +1,45 @@
+//This is how you write a comment in our language
+
+/*
+This is how you write a multiline comment in our language. For each of our programs
+we will present our solution without any comments for clarity followed
+by an annotated version of the solution where we will explain what is going on in more detail
+*/
+
+while(streams[0].take == 1){
+
+    print(streams[0].take, streams[0].take, streams[1].take);
+
+};
+
+end;
+
+/*
+
+call keyword "methods" on a stream by specifying which stream i.e. stream[n].keyword
+our haskell main method loads the stream data into a list of lists before evaluation
+which can be referenced through this zero indexed notation
+
+All the standard boolean operations have been implemented, with "!" as you can see here 
+similar to java being used for boolean inversion
+
+while(!streams[0].empty){
+
+    print prints a list of int expressions which are things that evaluate to an int
+    the take keyword evaluates to an int but it also has a side effect ie removing
+    the head from a stream, so we took inspiration from the Haskell IO ideology
+    and had our int expression evaluation method return a tuple of the int value
+    paired with the possibly changed state
+
+    print(streams[0].take, streams[0].take, streams[1].take);
+
+};
+
+end keyword is not necessary, the interpreter can also finish by running out of 
+expressions to evaluate however we would like to encourage its use as a convention
+in our language as it is more clear and also you can end evaluation early if needed
+eg within a loop if checking for some condition
+
+end;
+
+*/

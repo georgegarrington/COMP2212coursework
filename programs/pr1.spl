@@ -1,49 +1,51 @@
-/*
-We have tried to make the syntax similar to Java as we find it to be more
-readable and clear than e.g. "method arg1, arg2" for the iterative style we have chosen.
-We could have omitted "()" at the end of keywords however we think it helps
-to clearly distinguish variables from keyword "methods" 
-*/
+//This is how you write a comment in our language
 
 /*
-The streams can be treated as if there is one big array of streams ready to be manipulated which
-is indeed the case as our haskell code scans the input text file of stream data into a list of lists
-which can be accessed using this syntax. streams[n].empty() returns true if stream n is empty,
-streams[n].drop() drops the head from stream n and updates state accordingly, streams[n].take() also
-drops the head but it returns the value of the removed head too
-
-It is important to note that streams[n].take() is an int expression so it cannot be used as a standalone 
-expression by itself, it must be used somewhere where an int expression is expected eg below you can see
-two examples; string = IntExp (setting a variable), and printAll(IntExp, IntExp, IntExp ...)
+This is how you write a multiline comment in our language. For each of our programs
+we will present our solution without any comments for clarity followed
+by an annotated version of the solution where we will explain what is going on in more detail
 */
-while(!streams[0].empty() && !streams[1].empty()){
 
-    /* 
-    This is a more verbose albeit possibly more clear solution
+while(!streams[0].empty){
 
-    a = streams[0].take();
-    b = streams[0].take();
-    c = streams[1].take();
-
-    print and printAll are the only two keyword "methods" which take arguments, whereas
-    streams are treated as if they are "objects" in java and methods are called "on" them
-    using streams[n].method()
-
-    printAll(a, b, c);
-    */
-
-    //This is a shorter solution
-    printAll(streams[0].take(), streams[0].take(), streams[1].take());
+    print(streams[0].take, streams[0].take, streams[1].take);
 
 };
 
+end;
+
 /*
-The end keyword is not strictly necessary per se, the evaluator method will also stop
-when it runs out of sub expressions to evaluate so excluding "end" here is also a 
-perfectly valid solution; however, we would like to encourage it to be convention when
-using our language to always make use of "end" as that way it is more clear when looking at
-the program where it ends evaluation and also means you have the option to end the
-program somewhere in the middle of the code e.g. if you are checking for some end condition in
-a loop and do not need to carry on evaluating the program then you can simply use the end keyword
+
+
+call keyword "methods" on a stream by specifying which stream i.e. stream[n].keyword
+our haskell main method loads the stream data into a list of lists before evaluation
+which can be referenced through this zero indexed notation
+
+All the standard boolean operations have been implemented, with "!" as you can see here 
+similar to java being used for boolean inversion. We have chose to not allow using streams[n].take
+within int comparisons in a boolean expression as it is not a pure int expression and has a side effect, 
+so before evaluation the haskell code scans the parse tree and makes sure there are no boolean expressions with 
+int comparison expressions that contain "streams[n].take", it will show an error message if there are. 
+However, the peek keyword can be used instead to achieve the same thing.
+
+while(!streams[0].empty){
+
+    print prints a list of int expressions which are things that evaluate to an int
+    the take keyword evaluates to an int but it also has a side effect ie removing
+    the head from a stream, so we took inspiration from the Haskell IO ideology
+    and had our int expression evaluation method return a tuple of the int value
+    paired with the possibly changed state
+
+    print(streams[0].take, streams[0].take, streams[1].take);
+
+};
+
+end keyword is not necessary, the interpreter can also finish by running out of 
+expressions to evaluate however we would like to encourage its use as a convention
+in our language as it is more clear and also you can end evaluation early if needed
+eg within a loop if checking for some condition
+
+end;
+
 */
-end();
+
