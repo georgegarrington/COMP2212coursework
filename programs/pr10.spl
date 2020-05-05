@@ -1,0 +1,171 @@
+lngth = streams[0].length;
+
+//Our flawed solution can only generate the fibonacci sequence up to 8 (the 6th member)
+if(lngth > 6){
+
+    end;
+
+} else{
+
+    nothing;
+
+};
+
+/*
+Was a huge mistake not to include any kind of data structure
+like a list or any way of duplicating streams or accessing
+certain indices of streams, however an integer variable can
+actually be treated in a fashion similar to a stack in this
+fashion and then access the elements from it by evaluating
+stack modulo 10, then dividing stack by 10 
+*/
+for(stack = 0, unit = 1; !streams[0].empty; unit *= 10){
+
+    stack += streams[0].take * unit;
+
+};
+
+//The first 6 members of the fibonacci sequence in reverse
+reverseFibStack = 0;
+fibBase = 10^5;
+
+orderedFibStack = 0;
+orderedBase = 1;
+
+for(i = 0, fib1 = 1, fib2 = 1; i < 3; i++){
+
+    reverseFibStack += fib1 * fibBase;
+    fibBase /= 10;
+    reverseFibStack += fib2 * fibBase;
+    fibBase /= 10;
+
+    orderedFibStack += fib1 * orderedBase;
+    orderedBase *= 10;
+    orderedFibStack += fib2 * orderedBase;
+    orderedBase *= 10;
+
+    fib2Copy = fib2;
+    fib2 = fib2 + fib1;
+    fib1 = fib2Copy;
+    fib2Copy = fib2;
+    fib2 = fib2 + fib1;
+    fib1 = fib2Copy;
+
+};
+
+testFibBase = orderedFibStack;
+numBases = 0;
+
+while(testFibBase > 0){
+
+    numBases++;
+    testFibBase /= 10;
+
+};
+
+/*
+fibStack = reverseFibStack;
+while(fibStack / 10 > i){
+
+    fibStack /= 10;
+
+};
+
+print(0);
+print(0);
+print(0);
+
+fibStack = reverseFibStack;
+
+//Test cropping the stack
+while(fibStack / 10 > 3){
+
+    fibStack /= 10;
+
+};
+
+while(fibStack > 0){
+
+    print(fibStack % 10);
+    fibStack /= 10;
+
+};*/
+
+/*
+print(0);
+print(0);
+print(0);
+
+while(orderedFibStack > 0){
+
+    print(orderedFibStack % 10);
+    orderedFibStack /= 10;
+
+};*/
+
+
+for(i = 1; i <= lngth; i++){
+
+    //Make sure to use copies to not change the original values of the variables
+    stackCopy = stack;
+
+    //Reverse fib is behaving fine for now
+    fibStack = reverseFibStack;
+    numBasesCopy = numBases;
+
+    while(numBasesCopy > i){
+
+        numBasesCopy--;
+        fibStack /= 10;
+
+    };
+
+
+    //THIS WORKS FOR REVERSING AN INTEGER LEAVE IT
+    test = 1234; //THE INTEGER YOU WANT TO REVERSE
+    rev = 0;
+
+    testTensCount = 0;
+    testCopy = test;
+
+    while(testCopy > 0) {
+
+    testTensCount++;
+    testCopy /= 10;
+
+    };
+
+    print(0);
+    print(0);
+    print(0);
+    print(testTensCount);
+
+    testTensCount--;
+    unit = 1;
+
+    while(test > 0){
+
+            rev += (test % 10) * unit;
+            test /= 10;
+            unit *= 10;
+
+    };
+
+    print(rev); //THE RESULTING INTEGER
+    //THIS WORKS FOR NOW FOR REVERSING AN INTERGER LEAVE FOR NOW
+
+
+
+    /*
+    for(j = 1; j <= i; j++){
+
+        poppedStack = stackCopy % 10;
+        stackCopy /= 10;
+        poppedFib = fibStack % 10;
+        fibStack /= 10;
+
+        print(poppedStack * poppedFib);
+
+    };*/
+
+};

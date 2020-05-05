@@ -1,0 +1,31 @@
+
+test = 1234;
+rev = 0;
+
+testTensCount = 0;
+testCopy = test;
+
+while(testCopy > 0) {
+
+testTensCount++;
+testCopy /= 10;
+
+};
+
+print(0);
+print(0);
+print(0);
+print(testTensCount);
+
+testTensCount--;
+unit = 1;
+
+while(test > 0){
+
+	rev += (test % 10) * unit;
+	test /= 10;
+	unit *= 10;
+
+};
+
+print(rev);

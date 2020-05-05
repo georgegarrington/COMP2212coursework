@@ -1,0 +1,32 @@
+strmLength = 10;
+reverseStack = 0;
+
+fibStack = 0;
+
+fibBase = 10 ^ strmLength;
+
+fib1 = 1;
+fib2 = 1;
+
+for(i = 0; i < 6; i += 2){
+
+	fibStack += fib1 * fibBase;
+	fibBase /= 10;
+	fibStack += fib2 * fibBase;
+	fibBase /= 10;
+
+	fib2Copy = fib2;
+	fib2 = fib2 + fib1;
+	fib1 = fib2Copy;
+	fib2Copy = fib2;
+	fib2 = fib2 + fib1;
+	fib1 = fib2Copy;
+
+};
+
+while(fibStack > 0){
+
+	print(fibStack % 10);
+	fibStack /= 10;
+
+};

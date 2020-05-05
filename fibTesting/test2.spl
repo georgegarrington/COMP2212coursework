@@ -1,0 +1,31 @@
+//CHECK THAT REVERSE FIBB STACK GENERATION WORKS
+
+//
+strmLength = 10;
+
+fib1 = 1;
+fib2 = 1;
+
+/*
+We want to put it in reverse order so put in highest base ten then decrement
+starting from the length of the stream lets say here its 10 as above
+*/
+stackBase = 10 ^ strmLength;
+reverseStack = 0;
+
+for(fib1 = 1, fib2 = 1; stackBase > 10; fibTmp = fib1, fib1 = fib2, fib2 
++= fibTmp, fibTmp = fib1, fib1 = fib2, fib2 += fibTmp){
+
+	reverseStack += fib1 * stackBase;
+	stackBase /= 10;
+	reverseStack += fib2 * stackBase;
+	stackBase /= 10;
+
+};
+
+while(reverseStack > 0){
+
+	print(reverseStack % 10);
+	reverseStack /= 10;
+
+};

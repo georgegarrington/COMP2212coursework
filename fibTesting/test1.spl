@@ -1,0 +1,21 @@
+//CHECK THAT THE STACK LIKE STRUCTURE WORKS
+
+//CONFIRMED IT WORKS FINE
+
+stack = 0;
+strmBase = 1;
+strLength = streams[0].length;
+
+while(!streams[0].empty){
+
+	stack += strmBase * streams[0].take;
+	strmBase *= 10;
+
+};
+
+while(stack > 0){
+
+	print(stack % 10);
+	stack /= 10;
+
+};
