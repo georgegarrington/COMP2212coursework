@@ -39,3 +39,4 @@ addToResult result [] = result
 --add to [1,2] 1 from c
 --           result  c
 addToResult (x:xs) (y:ys) = (x ++ y) : addToResult xs ys                         
+

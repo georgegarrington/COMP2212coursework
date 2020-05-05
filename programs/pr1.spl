@@ -16,6 +16,7 @@ end;
 
 /*
 
+
 call keyword "methods" on a stream by specifying which stream i.e. stream[n].keyword
 our haskell main method loads the stream data into a list of lists before evaluation
 which can be referenced through this zero indexed notation
@@ -47,3 +48,4 @@ eg within a loop if checking for some condition
 end;
 
 */
+
