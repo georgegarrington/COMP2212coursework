@@ -32,6 +32,7 @@ fibBase = 10^5;
 orderedFibStack = 0;
 orderedBase = 1;
 
+//Generating the fibonacci sequence
 for(i = 0, fib1 = 1, fib2 = 1; i < 3; i++){
 
     reverseFibStack += fib1 * fibBase;
