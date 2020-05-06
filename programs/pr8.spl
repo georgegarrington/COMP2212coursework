@@ -12,7 +12,8 @@ while(!streams[0].empty && !streams[1].empty){
     can see here where you want to declare multiple variables it can 
     help to make the code more readable and concise
     */
-    a1 = streams[0].take; b1 = streams[1].take;
+    a1 = streams[0].take; 
+    b1 = streams[1].take;
     print(a1, b1);
 
     if(!streams[0].empty && !streams[1].empty){
@@ -21,7 +22,8 @@ while(!streams[0].empty && !streams[1].empty){
         All scope in our language is global so can declare variables 
         within an if statement and access them anywhere
         */
-        a2 = streams[0].take; b2 = streams[1].take;
+        a2 = streams[0].take; 
+        b2 = streams[1].take;
         print(a2, b2);
 
     } else {
@@ -36,7 +38,8 @@ while(!streams[0].empty && !streams[1].empty){
 
     if(!streams[0].empty && !streams[1].empty){
 
-        a3 = streams[0].take; b3 = streams[1].take;
+        a3 = streams[0].take; 
+        b3 = streams[1].take;
         print(a3, b3);
 
     } else {
@@ -47,7 +50,8 @@ while(!streams[0].empty && !streams[1].empty){
 
     if(!streams[0].empty && !streams[1].empty){
 
-        a4 = streams[0].take; b4 = streams[1].take;
+        a4 = streams[0].take; 
+        b4 = streams[1].take;
         print(a4, b4);
 
     } else {
@@ -59,7 +63,8 @@ while(!streams[0].empty && !streams[1].empty){
     if(!streams[0].empty && !streams[1].empty){
         
         //If 5 element pairs have been printed then a checksum can be calculated
-        a5 = streams[0].take; b5 = streams[1].take;
+        a5 = streams[0].take; 
+        b5 = streams[1].take;
         checksum = a1 + a2 + a3 + a4 + a5 - b1 - b2 - b3 - b4 - b5;
         print(a5, b5, checksum);
 

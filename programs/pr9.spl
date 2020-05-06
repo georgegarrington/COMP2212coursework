@@ -1,0 +1,7 @@
+for(counter = 1; !streams[0].empty; counter++){
+
+	print(streams[0].take, counter);
+
+};
+
+end;
