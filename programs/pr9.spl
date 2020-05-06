@@ -1,0 +1,7 @@
+for(increasingSeq = 1; !streams[0].empty; increasingSeq ++){
+
+	print(streams[0].take, increasingSeq);
+
+};
+
+end;
