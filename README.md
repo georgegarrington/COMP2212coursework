@@ -1,7 +1,7 @@
 # What is this coursework?
 
 
-From our Programming Language Concepts module; we were tasked with creating a Haskell interpreter for our own custom designed domain specific language which manipulates streams of integers, making use of the Haskell libraries Alex for lexing and Happy for parsing. The BNF of our language can be found in the file "Grammar.y"
+From our Programming Language Concepts module; we were tasked with creating a Haskell interpreter for our own custom designed domain specific language which manipulates streams of integers, making use of the Haskell libraries Alex for lexing and Happy for parsing. The BNF of our language can be found in the file "Grammar.y", which is also the file used by the happy library to generate the parser.
 
 ## Compiling
 
