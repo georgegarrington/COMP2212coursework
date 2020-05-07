@@ -1,6 +1,6 @@
-for(increasingSeq = 1; !streams[0].empty; increasingSeq ++){
+for(counter = 1; !streams[0].empty; counter++){
 
-	print(streams[0].take, increasingSeq);
+	print(streams[0].take, counter);
 
 };
 
