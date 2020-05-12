@@ -11,3 +11,5 @@ for(fib1 = 0, fib2 = 0; !streams[0].empty; fib1 = fib2, fib2 = sum){
     print(sum);
 
 };
+
+end;
