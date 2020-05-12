@@ -1,0 +1,46 @@
+{
+    "scopeName": "source.spl",
+    "patterns": [{ "include": "#expression" }],
+    "repository": {
+      "expression": {
+        "patterns": [{"include": "#multiLine"},
+            { "include": "#singleLine"},
+            { "include": "#letter" }, 
+            { "include": "#paren-expression" }]
+      },
+      "multiLine": {
+        "begin": "/*",
+        "end": "*/",
+        "name": "comment"
+      },
+      "singleLine": {
+        "begin": "//",
+        "end": "\n",
+        "name": "comment"
+      },
+      "parenths": {
+        "match": "(|)",
+        "name": "parenth"
+      },
+      "squares": {
+        "match": "[|]",
+        "name": "square"
+      },
+      "curlies": {
+        "match": "{|}",
+        "name": "curly"
+      },
+      "paren-expression": {
+        "begin": "\\(",
+        "end": "\\)",
+        "beginCaptures": {
+          "0": { "name": "punctuation.paren.open" }
+        },
+        "endCaptures": {
+          "0": { "name": "punctuation.paren.close" }
+        },
+        "name": "expression.group",
+        "patterns": [{ "include": "#expression" }]
+      }
+    }
+  }

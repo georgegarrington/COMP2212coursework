@@ -1,0 +1,118 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+name : SPL
+file_extensions: [spl]
+scope: source.SPL
+
+variables:
+  string: '[A-Za-z_][A-Za-z_0-9]*'
+
+contexts:
+
+  main:
+
+    - match: //
+      scope: comment.SPL
+      push: 
+        - match: \n
+          scope: comment.SPL
+          pop: true
+
+    - match: /\*\*/
+      scope: comment.SPL
+      include: comment
+      push: multiLine
+
+    - match: \(
+      scope : parenths.SPL
+      push: parenths
+
+    - match: \)
+      scope: invalid.SPL
+
+    - match: \[
+      scope : squares.SPL
+      push: squares
+
+    - match: \]
+      scope: invalid.SPL
+
+    - match: \{
+      scope: curlies.SPL
+      push: curlies
+
+    - match: \}
+      scope: invalid.SPL
+
+    # Keywords are if, else for and while.
+    # Note that blackslashes don't need to be escaped within single quoted
+    # strings in YAML. When using single quoted strings, only single quotes
+    # need to be escaped: this is done by using two single quotes next to each
+    # other.
+    - match: '\b(if|else|for|while|end)\b'
+      scope: control.SPL
+
+    - match: '\b(take|drop|empty|length|print)\b'
+      scope: method.SPL
+
+    - match: '\b(=|*=|+=|/=|-=)\b'
+      scope: eqOperator.SPL
+
+    - match: '\b(streams)\b'
+      scope: streams.SPL
+
+    - match: \.
+      scope: punct.SPL 
+
+    - match: \;
+      scope: punct.SPL
+
+    - match: '=='
+      scope: boolOP.SPL
+
+    - match: '!='
+      scope: boolOP.SPL
+
+    - match: '!'
+      scope: boolOP.SPL
+
+    - match: '&&'
+      scope: boolOP.SPL
+
+    - match: '||'
+      scope: boolOP.SPL
+
+    # Numbers
+    - match: '\b(-)?[0-9.]+\b'
+      scope: number.SPL
+
+    - match: '\b{{string}}\b'
+      scope: var.SPL
+
+  multiLine: 
+    
+    - match: /\*
+      scope: comment.SPL
+      push:
+        - match: \*/
+          scope: comment.SPL
+          pop: true
+
+  parenths:
+    - match: \)
+      scope: parenths.SPL
+      pop: true
+    - include: main
+
+  squares:
+    - match: \]
+      scope: squares.SPL
+      pop: true
+    - include: main
+
+  curlies:
+    - match: \}
+      scope: curlies.SPL
+      pop: true
+    - include: main
