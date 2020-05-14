@@ -1,14 +1,6 @@
-//print (streams[2].peek);
-//print (streams[2].take);
-
-//Check error function for finding variable
-//print (x);
-
-/*
 while(streams[4].empty){
 
     nothing;
 
-};*/
+};
 
-print(streams[2].length);
